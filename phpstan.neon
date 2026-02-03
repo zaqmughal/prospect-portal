@@ -1,0 +1,18 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    paths:
+        - app/
+    level: 5
+    treatPhpDocTypesAsCertain: false
+    reportUnmatchedIgnoredErrors: false
+    ignoreErrors:
+        - '#missingType\.generics#'
+        - '#Cannot call method label\(\) on string#'
+        - '#Cannot call method format\(\) on string#'
+        - '#Cannot access property \$value on string#'
+        - '#Invalid array key type#'
+        - '#unresolvable type#'
+    excludePaths:
+        - app/Http/Controllers/Auth/*
