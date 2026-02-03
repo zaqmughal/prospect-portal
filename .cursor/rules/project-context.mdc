@@ -1,0 +1,185 @@
+# Project Context & Architecture
+
+## 🏗️ **Scope**: All project files and development work
+## 🎯 **Type**: Always Applied
+## 🎯 **Purpose**: Comprehensive project context and architectural understanding
+
+## 🏢 **Platform Overview**
+
+### **Project Purpose**
+This is an enterprise-grade web application built on Laravel framework, designed to provide comprehensive business solutions with robust user management, data processing, and reporting capabilities. The platform serves as a scalable solution for organizations requiring secure, multi-tenant web applications.
+
+### **Core Business Functions**
+- **User Management**: Multi-role user system with comprehensive permission management
+- **Data Management**: Secure handling of business data with audit trails
+- **Report Generation**: Detailed reports and analytics capabilities
+- **Notification System**: Extensive communication and alert system
+- **Integration Capabilities**: API-driven architecture for external integrations
+- **Multi-tenancy**: Support for multiple organizations and data isolation
+
+## 🏗️ **Technical Architecture**
+
+### **Backend Stack**
+- **Framework**: Laravel (PHP 8.x)
+- **Database**: MySQL with comprehensive migration system
+- **Authentication**: Laravel's built-in auth with custom extensions
+- **API**: RESTful API architecture with extensive endpoint coverage
+- **Queue System**: Background job processing for notifications and reports
+- **File Storage**: Multi-disk storage system with S3 integration
+
+### **Frontend Stack**
+- **Build System**: Laravel Mix (Webpack-based)
+- **Styling**: SCSS with comprehensive component architecture
+- **JavaScript**: Modern ES6+ with modular structure
+- **UI Framework**: Custom component library
+- **Responsive Design**: Mobile-first approach with accessibility focus
+
+### **Testing Infrastructure**
+- **Unit Testing**: PHPUnit with comprehensive test coverage
+- **Feature Testing**: Laravel's built-in testing framework
+- **E2E Testing**: Playwright for browser automation
+- **Code Quality**: PHPStan, Laravel Pint, ESLint
+- **Coverage**: Minimum 80% code coverage requirement
+
+## 📊 **Database Architecture**
+
+### **Core Entities**
+- **Users**: Multi-role user system with preferences and permissions
+- **Business Data**: Core business entities and data models
+- **Notifications**: Extensive notification system with multiple notification types
+- **Reports**: Generated reports and analytics
+- **Settings**: System configuration and user preferences
+
+### **Key Relationships**
+- Users have multiple roles and permissions
+- Business entities are linked to users and generate reports
+- Notifications are triggered by various system events
+- Settings control system behavior and user preferences
+
+## 🔐 **Security Architecture**
+
+### **Authentication & Authorization**
+- **Multi-factor Authentication**: Enhanced security for sensitive operations
+- **Role-based Access Control**: Granular permission system
+- **Session Management**: Secure session handling with database storage
+- **API Security**: Token-based authentication for API endpoints
+
+### **Data Protection**
+- **Input Validation**: Comprehensive validation on all user inputs
+- **Output Encoding**: XSS protection through proper encoding
+- **CSRF Protection**: Cross-site request forgery prevention
+- **SQL Injection Prevention**: Eloquent ORM with parameterized queries
+- **Data Encryption**: Sensitive data encryption at rest and in transit
+
+## 🎨 **User Interface Architecture**
+
+### **Design System**
+- **Accessibility First**: WCAG 2.2 AA compliance throughout
+- **Responsive Design**: Mobile, tablet, and desktop optimization
+- **Component Library**: Reusable UI components
+- **Consistent Styling**: SCSS-based styling system
+
+### **User Experience**
+- **Intuitive Navigation**: Clear information architecture
+- **Progressive Enhancement**: Core functionality works without JavaScript
+- **Performance Optimization**: Fast loading and responsive interactions
+- **Error Handling**: User-friendly error messages and recovery
+
+## 🔄 **Development Workflow**
+
+### **Code Quality Standards**
+- **PSR-12 Compliance**: PHP coding standards
+- **Laravel Conventions**: Framework best practices
+- **Security First**: Security considerations in all code
+- **Comprehensive Testing**: Multiple testing layers
+- **Documentation**: Extensive inline and external documentation
+
+### **Deployment Pipeline**
+- **Version Control**: Git-based workflow with feature branches
+- **CI/CD**: Automated testing and deployment
+- **Environment Management**: Development, staging, production
+- **Monitoring**: Application and infrastructure monitoring
+
+## 📈 **Performance Considerations**
+
+### **Backend Optimization**
+- **Database Indexing**: Optimized queries and indexes
+- **Caching Strategy**: Multiple caching layers
+- **Queue Processing**: Background job optimization
+- **API Performance**: Efficient endpoint design
+
+### **Frontend Optimization**
+- **Asset Compilation**: Optimized CSS and JavaScript
+- **Image Optimization**: Compressed and responsive images
+- **Lazy Loading**: Progressive content loading
+- **CDN Integration**: Content delivery optimization
+
+## 🔧 **Integration Capabilities**
+
+### **API Architecture**
+- **RESTful Design**: Standard HTTP methods and status codes
+- **Versioning**: API version management
+- **Rate Limiting**: Performance protection
+- **Documentation**: Comprehensive API documentation
+
+### **External Integrations**
+- **Email Services**: SMTP and third-party email providers
+- **File Storage**: Local and cloud storage options
+- **Analytics**: Usage tracking and reporting
+- **Third-party APIs**: External service integrations
+
+## 📋 **Development Guidelines**
+
+### **Code Organization**
+- **MVC Pattern**: Clear separation of concerns
+- **Service Layer**: Business logic encapsulation
+- **Repository Pattern**: Data access abstraction
+- **Event System**: Decoupled component communication
+
+### **Documentation Standards**
+- **Inline Comments**: Complex logic explanation
+- **API Documentation**: Endpoint specifications
+- **User Guides**: End-user documentation
+- **Technical Docs**: Architecture and deployment guides
+
+## 🎯 **Quality Assurance**
+
+### **Testing Strategy**
+- **Unit Tests**: Individual component testing
+- **Integration Tests**: System component interaction
+- **Feature Tests**: End-to-end user scenarios
+- **Performance Tests**: Load and stress testing
+- **Security Tests**: Vulnerability assessment
+
+### **Code Review Process**
+- **Peer Review**: Mandatory code review for all changes
+- **Security Review**: Security-focused code analysis
+- **Performance Review**: Performance impact assessment
+- **Accessibility Review**: WCAG compliance verification
+
+## 🚀 **Deployment & Operations**
+
+### **Environment Management**
+- **Development**: Local development environment
+- **Staging**: Production-like testing environment
+- **Production**: Live system with monitoring
+
+### **Monitoring & Alerting**
+- **Application Monitoring**: Performance and error tracking
+- **Infrastructure Monitoring**: Server and database monitoring
+- **Security Monitoring**: Threat detection and response
+- **User Analytics**: Usage patterns and behavior tracking
+
+## 📚 **Documentation Structure**
+
+### **Technical Documentation**
+- **API Documentation**: Comprehensive endpoint reference
+- **Database Schema**: Entity relationship documentation
+- **Deployment Guides**: Setup and configuration instructions
+- **Architecture Decisions**: Technical decision records
+
+### **User Documentation**
+- **User Guides**: End-user instructions
+- **Administrator Guides**: System administration
+- **Training Materials**: User onboarding resources
+- **FAQ**: Common questions and troubleshooting

@@ -1,0 +1,73 @@
+---
+description: Backend development standards for Laravel and API development
+globs: ["app/**/*.php", "routes/**/*.php", "config/**/*.php"]
+alwaysApply: false
+---
+
+# Backend Development
+
+## 🗄️ **Laravel Backend Standards**
+- Implement proper data validation and sanitization
+- Use secure authentication and authorization
+- Implement proper logging and monitoring
+- Use environment-based configuration
+- Implement proper error handling and logging
+- Use database transactions appropriately
+- Implement proper rate limiting and throttling
+- Follow API design best practices
+
+## 🔐 **Security Implementation**
+- **Input Validation**: Validate all incoming data using Form Requests
+- **Output Encoding**: Properly encode all output to prevent XSS
+- **Authentication**: Use Laravel's built-in authentication system
+- **Authorization**: Implement policies and gates for access control
+- **CSRF Protection**: Include CSRF tokens in all forms
+- **SQL Injection**: Use Eloquent ORM and parameterized queries
+- **XSS Prevention**: Use Blade's automatic escaping
+
+## 🏗️ **Architecture & Design**
+- Design for scalability and maintainability
+- Implement proper separation of concerns
+- Use dependency injection and inversion of control
+- Follow established architectural patterns (MVC, Repository, etc.)
+- Design APIs with RESTful principles
+- Implement proper data validation at all layers
+- Use design patterns appropriately (don't over-engineer)
+- Consider future extensibility in design decisions
+
+## 📡 **API Development**
+- Follow RESTful API conventions
+- Use proper HTTP status codes
+- Implement consistent response formats
+- Use API Resources for data transformation
+- Implement proper error handling and responses
+- Use API versioning when appropriate
+- Document APIs with proper documentation
+- Implement rate limiting and throttling
+
+## 🔧 **Laravel Best Practices**
+- **Controllers**: Keep controllers thin, delegate to services
+- **Models**: Use Eloquent relationships and accessors/mutators
+- **Requests**: Use Form Request classes for validation
+- **Resources**: Use API Resources for consistent responses
+- **Policies**: Implement authorization policies
+- **Events**: Use events for decoupled functionality
+- **Jobs**: Use queued jobs for background processing
+- **Middleware**: Implement custom middleware for cross-cutting concerns
+
+## 📊 **Data Management**
+- Use database migrations for schema changes
+- Implement proper database seeding
+- Use model factories for test data
+- Implement proper data relationships
+- Use database transactions for data integrity
+- Implement proper data validation rules
+
+## 📋 **Backend Checklist**
+- ✅ **Input validation** implemented with Form Requests
+- ✅ **Authentication** and authorization properly configured
+- ✅ **API endpoints** follow RESTful conventions
+- ✅ **Error handling** implemented throughout
+- ✅ **Database transactions** used appropriately
+- ✅ **Logging** implemented for monitoring
+- ✅ **Security measures** properly implemented

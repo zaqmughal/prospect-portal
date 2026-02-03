@@ -1,0 +1,59 @@
+---
+description: Performance optimization guidelines for database, frontend, and backend
+globs: ["app/**/*.php", "resources/**/*.js", "resources/**/*.scss", "public/**/*.js", "public/**/*.css"]
+alwaysApply: false
+---
+
+# Performance Optimization
+
+## ⚡ **Database Performance**
+- Optimize database queries and use proper indexing
+- Implement caching strategies where appropriate
+- Use eager loading to prevent N+1 query problems
+- Implement proper pagination for large datasets
+- Use database transactions appropriately
+- Monitor slow queries and optimize them
+- Use database connection pooling when applicable
+
+## 🌐 **Frontend Performance**
+- Minimize HTTP requests and optimize asset delivery
+- Use lazy loading for images and heavy resources
+- Implement proper asset bundling and minification
+- Use CDNs for static assets when possible
+- Optimize JavaScript execution and avoid blocking operations
+- Implement proper caching headers
+- Use modern image formats (WebP, AVIF) when possible
+
+## 🚀 **Backend Performance**
+- Implement proper memory management and avoid memory leaks
+- Use efficient algorithms and data structures
+- Profile and benchmark code for performance bottlenecks
+- Implement proper caching at multiple levels
+- Use background jobs for time-consuming tasks
+- Optimize file uploads and processing
+- Implement proper rate limiting and throttling
+
+## 📊 **Caching Strategies**
+- **Application Cache**: Cache frequently accessed data
+- **Database Query Cache**: Cache expensive database queries
+- **View Cache**: Cache rendered views and partials
+- **Route Cache**: Cache route definitions
+- **Config Cache**: Cache configuration files
+- **CDN Cache**: Use CDN for static assets
+
+## 🔍 **Performance Monitoring**
+- Monitor application performance metrics
+- Track database query performance
+- Monitor memory usage and CPU utilization
+- Set up performance alerts and thresholds
+- Use profiling tools to identify bottlenecks
+- Monitor user experience metrics
+
+## 📋 **Performance Checklist**
+- ✅ **Database queries** optimized and indexed
+- ✅ **N+1 queries** eliminated with eager loading
+- ✅ **Caching** implemented where appropriate
+- ✅ **Assets** minified and compressed
+- ✅ **Images** optimized and lazy loaded
+- ✅ **Memory leaks** prevented
+- ✅ **Performance monitoring** in place

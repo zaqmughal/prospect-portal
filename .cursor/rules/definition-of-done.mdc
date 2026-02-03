@@ -1,0 +1,70 @@
+---
+description: Definition of Done checklist for all development tasks
+globs: ["**/*.php", "**/*.js", "**/*.scss", "**/*.blade.php"]
+alwaysApply: true
+---
+
+# Definition of Done Checklist
+
+## 📋 **Definition of Done Checklist**
+
+Every task must meet these requirements before completion:
+
+### **Code Quality & Testing**
+✅ **Composer test (Pest)** - All tests passing with green status  
+✅ **Code coverage** - Minimum 80% coverage on changed lines  
+✅ **PHPStan analysis** - Passes at repository's configured level  
+✅ **Laravel Pint** - Code style standards met  
+
+### **Frontend & Build**
+✅ **npm run lint** - No linting errors or warnings  
+✅ **npm run build** - Production build completes successfully  
+✅ **Accessibility testing** - WCAG 2.2 AA compliance verified  
+✅ **Cross-browser testing** - Functionality verified in target browsers  
+
+### **Security & Validation**
+✅ **Input validation** - All user inputs properly validated and sanitized  
+✅ **Authorization checks** - Proper permission verification implemented  
+✅ **No raw HTML output** - All output properly escaped  
+✅ **Security headers** - Appropriate security headers configured  
+✅ **CSRF protection** - Cross-site request forgery protection enabled  
+
+### **Documentation & Communication**
+✅ **CHANGELOG updated** - Reference this profile version  
+✅ **API documentation** - New endpoints documented with examples  
+✅ **Inline comments** - Complex logic explained clearly  
+✅ **Setup instructions** - Environment configuration documented  
+
+### **Pull Request Requirements**
+✅ **Clear PR description** including:
+- Context and business requirements
+- Technical approach and implementation details
+- Risk assessment and mitigation strategies
+- Rollout plan and rollback procedures
+- Testing notes and coverage verification
+- Accessibility acceptance criteria
+- Performance impact assessment
+
+## 🎯 **Quality Gates**
+- **Security Review**: All security requirements met
+- **Accessibility Review**: WCAG 2.2 AA compliance verified
+- **Performance Review**: No performance regressions introduced
+- **Code Review**: Peer review completed and approved
+- **Testing Review**: All tests passing with adequate coverage
+
+## ⚠️ **Blocking Criteria**
+- Any failing tests
+- Security vulnerabilities identified
+- Accessibility issues found
+- Performance regressions detected
+- Code style violations
+- Missing documentation
+- Incomplete error handling
+
+## 🚀 **Deployment Readiness**
+- All quality gates passed
+- Staging environment testing completed
+- Rollback procedures documented
+- Monitoring and alerting configured
+- Team notification completed
+- Documentation updated

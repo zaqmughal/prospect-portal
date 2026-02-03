@@ -1,0 +1,55 @@
+---
+description: Safety protocols for dangerous operations and deployment
+globs: ["database/migrations/**/*.php", "app/Console/Commands/**/*.php", "deploy/**/*", "*.yml", "*.yaml"]
+alwaysApply: true
+---
+
+# Safety Protocols
+
+## ⚠️ **Dangerous Actions & Safety Protocols**
+
+### **Database & Migration Safety**
+- **NEVER suggest destructive migrations** without explicit user approval
+- **ALWAYS include rollback plans** for any database changes
+- **Require backup confirmation** before suggesting data modifications
+- **Suggest staging environment testing** for all database changes
+- **Include data validation checks** before and after migrations
+
+### **Deployment & Infrastructure Safety**
+- **ALWAYS include deployment checklists** for any infrastructure changes
+- **Require rollback procedures** for all deployment suggestions
+- **Suggest blue-green deployment** strategies when applicable
+- **Include health check requirements** for new services
+- **Require monitoring setup** for new deployments
+
+### **Security & Access Control**
+- **NEVER suggest hardcoded credentials** or secrets in code
+- **ALWAYS require proper authentication** for new endpoints
+- **Include authorization checks** for all user actions
+- **Suggest security testing** for new features
+- **Require input validation** for all user inputs
+
+## 🛡️ **Safety Checklist for Operations**
+- ✅ **Backup strategy** in place before data changes
+- ✅ **Rollback plan** documented and tested
+- ✅ **Staging environment** testing completed
+- ✅ **Monitoring** setup for new deployments
+- ✅ **Security review** completed for sensitive changes
+- ✅ **User approval** obtained for destructive operations
+- ✅ **Documentation** updated for operational procedures
+
+## 🚨 **Emergency Procedures**
+- **Data Loss Prevention**: Always backup before destructive operations
+- **Rollback Strategy**: Have immediate rollback procedures ready
+- **Monitoring**: Set up alerts for critical system changes
+- **Communication**: Notify team of potentially risky operations
+- **Testing**: Verify changes in staging before production
+
+## 📋 **Pre-Operation Safety Check**
+1. **Risk Assessment**: Evaluate potential impact of changes
+2. **Backup Verification**: Ensure backups are current and tested
+3. **Staging Testing**: Verify changes work in staging environment
+4. **Rollback Plan**: Document and test rollback procedures
+5. **Team Notification**: Inform relevant team members
+6. **Monitoring Setup**: Ensure proper monitoring is in place
+7. **Documentation**: Update operational documentation

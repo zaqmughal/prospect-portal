@@ -1,0 +1,68 @@
+---
+description: Frontend development standards for HTML, CSS, and JavaScript
+globs: ["resources/views/**/*.php", "resources/sass/**/*.scss", "resources/js/**/*.js", "public/js/**/*.js", "public/css/**/*.css"]
+alwaysApply: false
+---
+
+# Frontend Development
+
+## 🎨 **UI/UX Standards**
+- Ensure responsive design principles
+- Implement progressive enhancement
+- Use semantic HTML and proper CSS architecture
+- Ensure cross-browser compatibility
+- Implement proper form validation and error handling
+- Use modern JavaScript features appropriately
+- Implement proper state management
+- Ensure accessibility compliance
+
+## 🏗️ **HTML Structure**
+- Use semantic HTML5 elements (header, nav, main, section, article, aside, footer)
+- Implement proper heading hierarchy (h1, h2, h3, etc.)
+- Use meaningful class and ID names
+- Ensure proper document structure and outline
+- Include proper meta tags and SEO elements
+- Use ARIA attributes for enhanced accessibility
+
+## 🎨 **CSS Architecture**
+- Follow BEM methodology for CSS class naming
+- Use CSS custom properties (variables) for consistency
+- Implement mobile-first responsive design
+- Use CSS Grid and Flexbox for layouts
+- Organize CSS with proper file structure
+- Use SCSS/Sass features appropriately
+- Implement proper CSS reset/normalize
+
+## ⚡ **JavaScript Standards**
+- Use modern ES6+ features
+- Implement proper error handling
+- Use async/await for asynchronous operations
+- Follow functional programming principles where appropriate
+- Implement proper event handling
+- Use proper variable scoping (let, const)
+- Avoid global variables and namespace pollution
+
+## 🔧 **Build Tools & Optimization**
+- Use Webpack/Mix for asset compilation
+- Implement proper code splitting
+- Use tree shaking to eliminate dead code
+- Minify and compress assets
+- Implement proper source maps for debugging
+- Use modern JavaScript transpilation
+
+## 📱 **Responsive Design**
+- Mobile-first approach
+- Flexible grid systems
+- Responsive images and media
+- Touch-friendly interface elements
+- Proper viewport configuration
+- Cross-device testing
+
+## 📋 **Frontend Checklist**
+- ✅ **Semantic HTML** structure implemented
+- ✅ **Responsive design** works on all devices
+- ✅ **CSS architecture** follows best practices
+- ✅ **JavaScript** uses modern features
+- ✅ **Accessibility** standards met
+- ✅ **Cross-browser** compatibility verified
+- ✅ **Performance** optimized

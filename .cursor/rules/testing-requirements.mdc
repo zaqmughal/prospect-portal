@@ -1,0 +1,60 @@
+---
+description: Comprehensive testing requirements and standards
+globs: ["tests/**/*.php", "app/**/*.php"]
+alwaysApply: false
+---
+
+# Testing Requirements
+
+## 🧪 **Core Testing Principles**
+- **ALWAYS include tests** for new functionality
+- Aim for minimum 80% code coverage
+- Write unit tests for individual functions and methods
+- Implement integration tests for API endpoints and workflows
+- Use descriptive test names that explain the expected behavior
+- Test both happy path and edge cases
+- Implement proper test data management and cleanup
+- Use mocking and stubbing appropriately
+- Test error conditions and exception handling
+- Ensure tests are fast, reliable, and maintainable
+
+## 🎯 **Test Types & Coverage**
+- **Unit Tests**: Test individual methods and classes in isolation
+- **Feature Tests**: Test complete user workflows and API endpoints
+- **Integration Tests**: Test component interactions and database operations
+- **Browser Tests**: Test user interface interactions (Laravel Dusk)
+- **API Tests**: Test REST API endpoints and responses
+- **Database Tests**: Test migrations, seeders, and model relationships
+
+## 🔧 **Laravel Testing Tools**
+- **Pest**: Primary testing framework (as configured in project)
+- **PHPUnit**: Underlying testing engine
+- **Laravel Dusk**: Browser testing for frontend interactions
+- **Mockery**: Mocking framework for external dependencies
+- **Faker**: Generate realistic test data
+- **Database Transactions**: Ensure test isolation
+
+## 📊 **Test Quality Standards**
+- **Descriptive Names**: Test methods should clearly describe what they test
+- **Single Responsibility**: Each test should verify one specific behavior
+- **Arrange-Act-Assert**: Structure tests with clear setup, execution, and verification
+- **Independent Tests**: Tests should not depend on each other
+- **Fast Execution**: Keep tests fast and efficient
+- **Reliable**: Tests should produce consistent results
+
+## 🧹 **Test Data Management**
+- Use factories for consistent test data generation
+- Clean up test data after each test
+- Use database transactions for test isolation
+- Avoid hardcoded test data when possible
+- Use realistic test scenarios
+
+## 📋 **Testing Checklist**
+- ✅ **Unit tests** written for all new methods
+- ✅ **Feature tests** cover user workflows
+- ✅ **Edge cases** tested
+- ✅ **Error conditions** handled
+- ✅ **Mocking** used for external dependencies
+- ✅ **Test data** properly managed
+- ✅ **Code coverage** meets 80% minimum
+- ✅ **Tests pass** consistently

@@ -1,0 +1,44 @@
+---
+description: Security-first approach for all code suggestions and reviews
+globs: ["app/**/*.php", "resources/views/**/*.php", "routes/**/*.php", "tests/**/*.php"]
+alwaysApply: true
+---
+
+# Security First Approach
+
+## 🔒 **Core Security Principles**
+- **ALWAYS prioritize security** in every code suggestion and review
+- Implement proper input validation, sanitization, and output encoding
+- Use parameterized queries and prepared statements for database operations
+- Follow OWASP Top 10 security guidelines
+- Implement proper authentication and authorization checks
+- Never expose sensitive information in logs, error messages, or client-side code
+- Use HTTPS and secure headers in web applications
+- Implement proper session management and CSRF protection
+- Follow the principle of least privilege
+
+## 🛡️ **Security Implementation Guidelines**
+- **Input Validation**: Validate and sanitize all user inputs at the server level
+- **Output Encoding**: Properly encode all output to prevent XSS attacks
+- **Database Security**: Use Eloquent ORM or parameterized queries exclusively
+- **Authentication**: Implement proper user authentication and session management
+- **Authorization**: Check user permissions before allowing access to resources
+- **CSRF Protection**: Include CSRF tokens in all forms and AJAX requests
+- **Security Headers**: Implement appropriate security headers (CSP, HSTS, etc.)
+
+## ⚠️ **Security Red Flags**
+- **NEVER suggest hardcoded credentials** or secrets in code
+- **ALWAYS require proper authentication** for new endpoints
+- **Include authorization checks** for all user actions
+- **Suggest security testing** for new features
+- **Require input validation** for all user inputs
+- **Never expose sensitive data** in error messages or logs
+
+## 🔍 **Security Review Checklist**
+- Review code for security vulnerabilities first
+- Check for proper error handling and edge cases
+- Verify input validation and output encoding
+- Ensure proper authentication and authorization
+- Check for potential injection vulnerabilities
+- Verify CSRF protection is implemented
+- Ensure sensitive data is properly protected

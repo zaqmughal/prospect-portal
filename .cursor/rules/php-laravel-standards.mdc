@@ -1,0 +1,53 @@
+---
+description: PHP and Laravel coding standards and best practices
+globs: ["app/**/*.php", "tests/**/*.php", "database/**/*.php", "config/**/*.php"]
+alwaysApply: false
+---
+
+# PHP & Laravel Standards
+
+## 📚 **Coding Best Practices & Standards**
+- Follow PSR-12 coding standards for PHP projects
+- Use meaningful, descriptive variable and function names
+- Keep functions small and focused (single responsibility principle)
+- Implement proper error handling with meaningful error messages
+- Use consistent code formatting and indentation
+- Follow SOLID principles and design patterns where appropriate
+- Implement proper separation of concerns
+- Use type hints and return types in PHP 7.4+
+- Follow Laravel conventions when working with Laravel projects
+
+## 🏗️ **Laravel-Specific Guidelines**
+- **Models**: Use Eloquent models with proper relationships and accessors/mutators
+- **Controllers**: Keep controllers thin, delegate business logic to services
+- **Requests**: Use Form Request classes for validation
+- **Resources**: Use API Resources for consistent JSON responses
+- **Policies**: Implement authorization policies for user permissions
+- **Events & Listeners**: Use events for decoupled functionality
+- **Jobs**: Use queued jobs for time-consuming tasks
+- **Middleware**: Implement custom middleware for cross-cutting concerns
+
+## 🔧 **PHP Best Practices**
+- **Type Declarations**: Use strict typing and return type declarations
+- **Error Handling**: Implement proper exception handling with custom exceptions
+- **Code Organization**: Use namespaces and autoloading properly
+- **Dependency Injection**: Use constructor injection for dependencies
+- **Immutability**: Prefer immutable objects where possible
+- **Documentation**: Use PHPDoc comments for all public methods
+
+## 🧪 **Laravel Testing Standards**
+- **Feature Tests**: Test complete user workflows and API endpoints
+- **Unit Tests**: Test individual methods and classes in isolation
+- **Database Tests**: Use database transactions for test isolation
+- **Mocking**: Mock external dependencies and services
+- **Factories**: Use model factories for test data generation
+- **Assertions**: Use descriptive assertion methods
+
+## 📋 **Code Quality Checklist**
+- ✅ **PSR-12 compliance** verified
+- ✅ **Type hints** added to all methods
+- ✅ **Error handling** implemented
+- ✅ **Laravel conventions** followed
+- ✅ **SOLID principles** applied
+- ✅ **Documentation** added for complex logic
+- ✅ **Tests written** for new functionality

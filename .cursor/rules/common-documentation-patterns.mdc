@@ -1,0 +1,428 @@
+# Common Documentation Patterns
+
+## 📋 **Scope**: Documentation files, README files, and technical writing
+## 🎯 **Type**: Agent Requested
+## 🎯 **Purpose**: Common patterns and templates for various documentation types
+
+## 📝 **README File Patterns**
+
+### **Project README Template**
+```markdown
+# [Project Name]
+
+[Brief description of what the project does and why it exists]
+
+## 🚀 Quick Start
+
+### Prerequisites
+- PHP 8.x
+- Composer
+- Node.js 16+
+- MySQL 8.0+
+
+### Installation
+```bash
+# Clone the repository
+git clone [repository-url]
+
+# Install PHP dependencies
+composer install
+
+# Install Node.js dependencies
+npm install
+
+# Copy environment file
+cp .env.example .env
+
+# Generate application key
+php artisan key:generate
+
+# Run database migrations
+php artisan migrate
+
+# Start development server
+php artisan serve
+```
+
+### Configuration
+- [Environment variables](#environment-variables)
+- [Database setup](#database-setup)
+- [Third-party services](#third-party-services)
+
+## 📚 Documentation
+- [API Documentation](docs/api.md)
+- [User Guide](docs/user-guide.md)
+- [Developer Guide](docs/developer-guide.md)
+- [Deployment Guide](docs/deployment.md)
+
+## 🧪 Testing
+```bash
+# Run PHP tests
+composer test
+
+# Run frontend tests
+npm test
+
+# Run all tests
+./runtests.sh
+```
+
+## 🤝 Contributing
+[Contribution guidelines and process]
+
+## 📄 License
+[License information]
+```
+
+### **Component README Template**
+```markdown
+# [Component Name]
+
+[Brief description of the component's purpose]
+
+## 📋 Overview
+[Detailed description of what the component does]
+
+## 🎯 Features
+- Feature 1: Description
+- Feature 2: Description
+- Feature 3: Description
+
+## 🚀 Usage
+
+### Basic Usage
+```php
+// PHP example
+$component = new ComponentName($options);
+$result = $component->process($data);
+```
+
+```javascript
+// JavaScript example
+import ComponentName from './ComponentName';
+const component = new ComponentName(options);
+const result = component.process(data);
+```
+
+### Advanced Usage
+[More complex examples and use cases]
+
+## ⚙️ Configuration
+[Configuration options and parameters]
+
+## 🧪 Testing
+[Testing instructions and examples]
+
+## 🔧 API Reference
+[Detailed API documentation]
+
+## 📝 Changelog
+[Version history and changes]
+```
+
+## 📊 **Technical Documentation Patterns**
+
+### **Architecture Decision Record (ADR) Template**
+```markdown
+# ADR-001: [Decision Title]
+
+## Status
+[Proposed | Accepted | Rejected | Superseded]
+
+## Context
+[What is the issue that we're seeing that is motivating this decision or change?]
+
+## Decision
+[What is the change that we're proposing or have agreed to implement?]
+
+## Consequences
+[What becomes easier or more difficult to do and any risks introduced by this change?]
+
+## Alternatives Considered
+[What other options did we consider and why did we reject them?]
+
+## Implementation Notes
+[Any specific implementation details or considerations]
+
+## References
+[Links to relevant documentation, issues, or discussions]
+```
+
+### **Database Schema Documentation**
+```markdown
+# Database Schema Documentation
+
+## Overview
+[High-level description of the database structure and purpose]
+
+## Entity Relationship Diagram
+[Link to ERD or describe relationships]
+
+## Tables
+
+### [table_name]
+**Purpose**: [What this table stores and why]
+
+**Columns**:
+| Column | Type | Null | Key | Default | Description |
+|--------|------|------|-----|---------|-------------|
+| id | int | NO | PRI | auto_increment | Primary key |
+| name | varchar(255) | NO | | | Entity name |
+| created_at | timestamp | NO | | CURRENT_TIMESTAMP | Creation timestamp |
+
+**Indexes**:
+- PRIMARY KEY (id)
+- INDEX idx_name (name)
+- INDEX idx_created_at (created_at)
+
+**Relationships**:
+- Belongs to: [other_table]
+- Has many: [other_table]
+
+**Business Rules**:
+- [Rule 1]
+- [Rule 2]
+- [Rule 3]
+```
+
+## 🔧 **Code Documentation Patterns**
+
+### **Function Documentation Template**
+```php
+/**
+ * [Brief description of what the function does]
+ * 
+ * [Detailed description if needed, including business context,
+ * side effects, and any important considerations]
+ * 
+ * @param [type] $param1 [Description of parameter]
+ * @param [type] $param2 [Description of parameter]
+ * @return [type] [Description of return value]
+ * @throws [Exception] [When this exception is thrown]
+ * 
+ * @example
+ * $result = processUserData([
+ *     'name' => 'John Doe',
+ *     'email' => 'john@example.com'
+ * ]);
+ * 
+ * @since 1.0.0
+ * @author [Author Name]
+ */
+public function processUserData(array $userData): array
+{
+    // Implementation
+}
+```
+
+### **Class Documentation Template**
+```php
+/**
+ * [Class name and purpose]
+ * 
+ * [Detailed description of the class, its responsibilities,
+ * and how it fits into the overall system architecture]
+ * 
+ * @package [Package Name]
+ * @author [Author Name]
+ * @since 1.0.0
+ * 
+ * @example
+ * $service = new UserService($repository, $validator);
+ * $user = $service->createUser($userData);
+ */
+class UserService
+{
+    // Class implementation
+}
+```
+
+## 🎨 **UI/UX Documentation Patterns**
+
+### **Component Documentation**
+```markdown
+# [Component Name] Component
+
+## Overview
+[Description of the component's purpose and functionality]
+
+## Design Specifications
+- **Size**: [Dimensions and responsive behavior]
+- **Colors**: [Color palette and usage]
+- **Typography**: [Font families and sizes]
+- **Spacing**: [Margin and padding specifications]
+
+## Accessibility
+- **WCAG Level**: AA
+- **Keyboard Navigation**: [How to navigate with keyboard]
+- **Screen Reader**: [Screen reader support details]
+- **Color Contrast**: [Contrast ratios]
+
+## Usage Examples
+
+### Basic Usage
+```html
+<component-name 
+    prop1="value1" 
+    prop2="value2"
+    @event="handler">
+    Content
+</component-name>
+```
+
+### Advanced Usage
+[More complex examples]
+
+## Props
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| prop1 | string | '' | Description |
+| prop2 | boolean | false | Description |
+
+## Events
+| Event | Payload | Description |
+|-------|--------|-------------|
+| click | {event} | Fired when clicked |
+| change | {value} | Fired when value changes |
+
+## Styling
+[CSS classes and customization options]
+```
+
+## 🔄 **Process Documentation Patterns**
+
+### **Deployment Process**
+```markdown
+# Deployment Process
+
+## Pre-Deployment Checklist
+- [ ] All tests passing
+- [ ] Code review completed
+- [ ] Security scan passed
+- [ ] Performance tests passed
+- [ ] Documentation updated
+- [ ] Database migrations tested
+- [ ] Rollback plan prepared
+
+## Deployment Steps
+1. **Backup Database**
+   ```bash
+   mysqldump -u username -p database_name > backup.sql
+   ```
+
+2. **Deploy Code**
+   ```bash
+   git pull origin main
+   composer install --no-dev
+   npm run build
+   ```
+
+3. **Run Migrations**
+   ```bash
+   php artisan migrate
+   ```
+
+4. **Clear Caches**
+   ```bash
+   php artisan cache:clear
+   php artisan config:clear
+   php artisan view:clear
+   ```
+
+5. **Verify Deployment**
+   - Check application health
+   - Verify key functionality
+   - Monitor error logs
+
+## Post-Deployment
+- [ ] Monitor application metrics
+- [ ] Check error logs
+- [ ] Verify user functionality
+- [ ] Update documentation
+- [ ] Notify stakeholders
+```
+
+### **Code Review Process**
+```markdown
+# Code Review Process
+
+## Review Checklist
+
+### Security
+- [ ] Input validation implemented
+- [ ] Output encoding applied
+- [ ] Authentication checks present
+- [ ] Authorization verified
+- [ ] No sensitive data exposed
+
+### Code Quality
+- [ ] Follows coding standards
+- [ ] No code duplication
+- [ ] Proper error handling
+- [ ] Clear variable names
+- [ ] Adequate comments
+
+### Testing
+- [ ] Unit tests written
+- [ ] Integration tests added
+- [ ] Test coverage adequate
+- [ ] Edge cases covered
+
+### Performance
+- [ ] No performance regressions
+- [ ] Database queries optimized
+- [ ] Caching implemented where appropriate
+- [ ] No memory leaks
+
+### Documentation
+- [ ] Code documented
+- [ ] API documentation updated
+- [ ] README updated if needed
+- [ ] Changelog updated
+```
+
+## 📈 **Metrics and Monitoring Documentation**
+
+### **Performance Metrics**
+```markdown
+# Performance Metrics
+
+## Key Performance Indicators (KPIs)
+- **Response Time**: < 200ms for 95% of requests
+- **Throughput**: > 1000 requests per second
+- **Error Rate**: < 0.1% of requests
+- **Uptime**: > 99.9%
+
+## Monitoring Setup
+- **Application Monitoring**: [Tool name and configuration]
+- **Database Monitoring**: [Database performance metrics]
+- **Infrastructure Monitoring**: [Server and network metrics]
+- **User Experience Monitoring**: [Real user monitoring]
+
+## Alerting Thresholds
+- **Critical**: Response time > 1s, Error rate > 1%
+- **Warning**: Response time > 500ms, Error rate > 0.5%
+- **Info**: Response time > 200ms, Error rate > 0.1%
+
+## Performance Optimization
+- **Database**: Query optimization, indexing strategy
+- **Caching**: Redis configuration, cache invalidation
+- **CDN**: Content delivery optimization
+- **Code**: Algorithm optimization, memory usage
+```
+
+## 🎯 **Usage Guidelines**
+
+### **When to Use These Patterns**
+- Creating new documentation
+- Updating existing documentation
+- Standardizing documentation across projects
+- Onboarding new team members
+- Maintaining consistency in technical writing
+
+### **Customization Tips**
+- Adapt templates to your specific needs
+- Add company-specific sections
+- Include relevant examples from your codebase
+- Maintain consistent formatting and structure
+- Regular review and updates based on feedback

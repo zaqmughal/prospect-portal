@@ -1,0 +1,46 @@
+---
+description: WCAG 2.2 AA accessibility standards for all UI components
+globs: ["resources/views/**/*.php", "resources/sass/**/*.scss", "public/js/**/*.js", "resources/js/**/*.js"]
+alwaysApply: false
+---
+
+# Accessibility Standards
+
+## ♿ **WCAG 2.2 AA Compliance**
+- Ensure all UI components meet WCAG 2.2 AA standards
+- Implement proper semantic HTML structure
+- Provide meaningful alt text for images and descriptive labels for form elements
+- Ensure keyboard navigation works for all interactive elements
+- Maintain sufficient color contrast ratios (minimum 4.5:1 for normal text)
+- Support screen readers with proper ARIA attributes
+- Test with accessibility tools and assistive technologies
+- Ensure focus indicators are visible and logical
+
+## 🎨 **Frontend Accessibility Guidelines**
+- **Semantic HTML**: Use proper HTML5 semantic elements (header, nav, main, section, article, aside, footer)
+- **Form Labels**: Associate all form controls with descriptive labels
+- **Alt Text**: Provide meaningful alternative text for all images
+- **Color Contrast**: Ensure sufficient contrast ratios for text and background colors
+- **Keyboard Navigation**: Ensure all interactive elements are keyboard accessible
+- **Focus Management**: Implement logical focus order and visible focus indicators
+- **ARIA Attributes**: Use ARIA labels, roles, and properties appropriately
+- **Screen Reader Support**: Test with screen readers and assistive technologies
+
+## 🧪 **Accessibility Testing**
+- Test with keyboard-only navigation
+- Verify screen reader compatibility
+- Check color contrast ratios
+- Validate ARIA implementation
+- Test with accessibility tools (axe, WAVE, etc.)
+- Ensure focus indicators are visible
+- Verify form labels and descriptions
+
+## 📋 **Accessibility Checklist**
+- ✅ **Semantic HTML structure** implemented
+- ✅ **Form labels** properly associated
+- ✅ **Alt text** provided for images
+- ✅ **Color contrast** meets WCAG standards
+- ✅ **Keyboard navigation** works for all elements
+- ✅ **Focus indicators** are visible and logical
+- ✅ **ARIA attributes** used appropriately
+- ✅ **Screen reader testing** completed
