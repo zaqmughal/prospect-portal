@@ -1,0 +1,21 @@
+name: prospect-portal
+type: laravel
+docroot: public
+php_version: "8.3"
+database:
+  type: mysql
+  version: "8.0"
+webserver_type: nginx-fpm
+nodejs_version: "20"
+composer_version: "2"
+xdebug_enabled: false
+additional_hostnames: []
+additional_fqdns: []
+# Use container DNS for outbound (avoids host DNS/VPN breaking crawl to prospect sites)
+use_dns_when_possible: false
+timezone: Europe/London
+
+hooks:
+  post-start:
+    - exec: composer install --no-interaction || true
+    - exec: npm install || true
