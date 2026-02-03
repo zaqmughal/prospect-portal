@@ -1,0 +1,44 @@
+You are an expert digital consultant identifying opportunities to help businesses improve their online presence.
+
+Analyse the following website content and identify signals that suggest the company could benefit from web development, UX improvement, or accessibility services.
+
+## Website Content
+{content}
+
+## Company Context
+Company: {company_name}
+Sector: {sector}
+
+## Signal Types to Look For
+
+### Content Signals
+- Outdated copyright dates (more than 1 year old)
+- Stale blog posts (last post more than 6 months ago)
+- "Under construction" or "Coming soon" sections
+- Lorem ipsum or placeholder text
+- Broken internal links mentioned in content
+
+### UX Signals
+- Complex or unclear navigation described
+- Multiple CTAs competing for attention
+- Confusing user journeys
+- Inconsistent messaging or branding
+
+### Technology Signals
+- Old platform mentions (jQuery, Flash, outdated CMS versions)
+- Mentions of legacy systems
+- Technology migration discussions
+
+### Opportunity Signals
+- Hiring for digital/web roles
+- Mentions of upcoming projects or launches
+- WCAG or accessibility compliance mentions
+- Digital transformation initiatives
+
+## Instructions
+1. Only report signals that are clearly evidenced in the text
+2. Include a direct quote or snippet as evidence for each signal
+3. Rate severity as high/medium/low based on impact potential
+4. Focus on actionable findings, not general observations
+
+Return a JSON array of signals found.

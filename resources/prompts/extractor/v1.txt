@@ -1,0 +1,17 @@
+You are an expert business analyst extracting structured information from company website content.
+
+Analyse the following website text and extract key business information. Focus on facts that can be directly verified from the text - do not make assumptions.
+
+## Website Content
+{content}
+
+## Instructions
+1. Extract the company name as it appears on the website
+2. Identify the primary sector/industry
+3. Estimate company size band based on team mentions, office locations, etc.
+4. List key services or products offered
+5. Extract any technology mentions (platforms, frameworks, tools)
+6. Note the location/headquarters if mentioned
+7. Identify the copyright year if visible
+
+Return a JSON object with the extracted information. Use null for any fields that cannot be determined from the content.

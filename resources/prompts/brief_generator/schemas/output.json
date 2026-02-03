@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": ["brief_markdown", "facts", "recommended_angle", "talking_points"],
+  "properties": {
+    "brief_markdown": {
+      "type": "string",
+      "description": "Full markdown-formatted brief"
+    },
+    "facts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["label", "value"],
+        "properties": {
+          "label": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Key facts as label-value pairs"
+    },
+    "recommended_angle": {
+      "type": "string",
+      "description": "Suggested outreach angle/approach"
+    },
+    "talking_points": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 3,
+      "maxItems": 5,
+      "description": "Specific talking points for outreach"
+    }
+  },
+  "additionalProperties": false
+}
