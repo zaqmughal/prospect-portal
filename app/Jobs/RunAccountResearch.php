@@ -107,7 +107,7 @@ class RunAccountResearch implements ShouldQueue
             $brief = $this->runBriefGenerator($ai, $run, $extractedInfo ?? [], $signals);
 
             if ($brief !== null) {
-                $this->saveBrief($run, $brief);
+                $this->saveBrief($run, array_merge($brief, ['content_md' => $this->buildFullBriefMarkdown($brief)]));
             }
 
             // Step 5: Generate outreach
@@ -356,6 +356,61 @@ class RunAccountResearch implements ShouldQueue
     }
 
     /**
+     * Build full brief as a single markdown document from all five sections.
+     *
+     * @param  array<string, mixed>  $briefData
+     */
+    private function buildFullBriefMarkdown(array $briefData): string
+    {
+        $sections = [];
+
+        $overview = trim((string) ($briefData['brief_markdown'] ?? ''));
+        if ($overview !== '') {
+            $sections[] = "## Company Overview\n\n{$overview}";
+        }
+
+        $facts = $briefData['facts'] ?? [];
+        if (is_array($facts) && $facts !== []) {
+            $lines = [];
+            foreach ($facts as $fact) {
+                $label = $fact['label'] ?? 'Item';
+                $value = $fact['value'] ?? '';
+                if (is_string($label) && is_string($value)) {
+                    $lines[] = "- **{$label}**: {$value}";
+                }
+            }
+            if ($lines !== []) {
+                $sections[] = "## Key Facts\n\n".implode("\n", $lines);
+            }
+        }
+
+        $opportunities = trim((string) ($briefData['opportunities_identified'] ?? ''));
+        if ($opportunities !== '') {
+            $sections[] = "## Opportunities Identified\n\n{$opportunities}";
+        }
+
+        $approach = trim((string) ($briefData['recommended_angle'] ?? ''));
+        if ($approach !== '') {
+            $sections[] = "## Recommended Approach\n\n{$approach}";
+        }
+
+        $talkingPoints = $briefData['talking_points'] ?? [];
+        if (is_array($talkingPoints) && $talkingPoints !== []) {
+            $lines = [];
+            foreach ($talkingPoints as $point) {
+                if (is_string($point) && trim($point) !== '') {
+                    $lines[] = '- '.trim($point);
+                }
+            }
+            if ($lines !== []) {
+                $sections[] = "## Talking Points\n\n".implode("\n", $lines);
+            }
+        }
+
+        return implode("\n\n", $sections);
+    }
+
+    /**
      * Save brief.
      *
      * @param  array<string, mixed>  $briefData
@@ -368,7 +423,7 @@ class RunAccountResearch implements ShouldQueue
             'research_run_id' => $run->id,
             'account_id' => $this->account->id,
             'version' => $version + 1,
-            'content_md' => $briefData['brief_markdown'] ?? '',
+            'content_md' => $briefData['content_md'] ?? $briefData['brief_markdown'] ?? '',
             'facts' => $briefData['facts'] ?? [],
         ]);
     }
@@ -399,6 +454,10 @@ class RunAccountResearch implements ShouldQueue
                 'playbook_angle' => $playbook->angle,
                 'dm_template' => $playbook->dm_template,
                 'email_template' => $playbook->email_template,
+                'company_description' => config('outreach.company_description'),
+                'company_website' => config('outreach.company_website'),
+                'linkedin_url' => config('outreach.linkedin_url'),
+                'case_study_url' => config('outreach.case_study_url'),
             ]
         );
 
@@ -420,9 +479,10 @@ class RunAccountResearch implements ShouldQueue
             ]);
         }
 
-        // Save Email
-        if (isset($data['email']['body'])) {
-            $emailContent = 'Subject: '.($data['email']['subject'] ?? 'No Subject')."\n\n".$data['email']['body'];
+        // Save Email (only when body has content so the card is not empty)
+        $emailBody = $data['email']['body'] ?? '';
+        if (trim((string) $emailBody) !== '') {
+            $emailContent = 'Subject: '.($data['email']['subject'] ?? 'No Subject')."\n\n".$emailBody;
             OutreachAsset::create([
                 'account_id' => $this->account->id,
                 'research_run_id' => $run->id,

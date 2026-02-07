@@ -23,6 +23,10 @@
       },
       "description": "Key facts as label-value pairs"
     },
+    "opportunities_identified": {
+      "type": "string",
+      "description": "Opportunities identified from signals"
+    },
     "recommended_angle": {
       "type": "string",
       "description": "Suggested outreach angle/approach"

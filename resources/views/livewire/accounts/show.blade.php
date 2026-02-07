@@ -79,13 +79,23 @@
             @if($activeTab === 'overview')
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <h3 class="text-lg font-medium text-gray-900 mb-4">Score Breakdown</h3>
+                        <h3 class="text-lg font-medium text-gray-900 mb-2">Score Breakdown</h3>
+                        <p class="text-sm text-gray-500 mb-4">Lead score is out of 100. It combines how well the account fits your ICP, how strong the detected signals are, and how ready the account is for outreach.</p>
                         @if($account->score_breakdown)
-                            <dl class="space-y-2">
+                            <dl class="space-y-4">
                                 @foreach($account->score_breakdown as $category => $data)
-                                    <div class="flex justify-between">
-                                        <dt class="text-gray-600">{{ ucwords(str_replace('_', ' ', $category)) }}</dt>
-                                        <dd class="font-medium">{{ $data['score'] ?? 0 }} / {{ $data['max'] ?? 0 }}</dd>
+                                    <div>
+                                        <div class="flex justify-between items-baseline">
+                                            <dt class="text-gray-900 font-medium">{{ ucwords(str_replace('_', ' ', $category)) }}</dt>
+                                            <dd class="font-semibold text-gray-700">{{ $data['score'] ?? 0 }} / {{ $data['max'] ?? 0 }}</dd>
+                                        </div>
+                                        @if($category === 'icp_fit')
+                                            <p class="text-sm text-gray-500 mt-0.5">How well this account matches your default ICP: sector, size band, and location (UK gets a small bonus). Based on data extracted from the website during research.</p>
+                                        @elseif($category === 'signal_strength')
+                                            <p class="text-sm text-gray-500 mt-0.5">Strength of detected signals (content, UX, tech, or opportunity issues). High-severity signals score more than medium or low. More relevant signals mean a stronger fit for outreach.</p>
+                                        @elseif($category === 'reachability')
+                                            <p class="text-sm text-gray-500 mt-0.5">How ready the account is for outreach: has a website, research completed successfully, and a brief was generated so you can personalise messages.</p>
+                                        @endif
                                     </div>
                                 @endforeach
                             </dl>
@@ -127,7 +137,7 @@
                 </div>
             @elseif($activeTab === 'brief')
                 @if($account->latestBrief)
-                    <div class="prose max-w-none">
+                    <div class="max-w-none [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:mt-6 [&_h2]:mb-2 [&_h2]:text-gray-900 [&_h2]:border-b [&_h2]:border-gray-200 [&_h2]:pb-1 [&_h2:first-child]:mt-0 [&_h3]:text-lg [&_h3]:font-medium [&_h3]:mt-4 [&_h3]:mb-1 [&_h3]:text-gray-800 [&_p]:my-2 [&_ul]:my-2 [&_li]:my-0.5">
                         {!! \Illuminate\Support\Str::markdown($account->latestBrief->content_md) !!}
                     </div>
                 @else
