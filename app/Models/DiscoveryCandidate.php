@@ -19,6 +19,10 @@ class DiscoveryCandidate extends Model
         'url',
         'title',
         'snippet',
+        'query',
+        'position',
+        'icp_fit',
+        'icp_fit_reason',
         'status',
         'reason',
     ];

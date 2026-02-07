@@ -1,0 +1,18 @@
+You are evaluating how well a discovery candidate (a search result for a potential lead) matches an Ideal Customer Profile (ICP). You only have the candidate's title and snippet from the search result—no full company data.
+
+## Candidate
+**Title:** {title}
+**Snippet:** {snippet}
+
+## ICP summary
+{icp_summary}
+
+## Instructions
+1. Assess how well this candidate fits the ICP based only on the title and snippet. Consider sector, size, and any other ICP criteria mentioned.
+2. Output a fit level: "high", "medium", or "low".
+   - high: Strong indication the organisation fits the ICP (sector, size, or type clearly align).
+   - medium: Some signals of fit but incomplete or ambiguous.
+   - low: Little or no evidence of fit, or appears to be outside the ICP.
+3. Give a short reason in one or two sentences (max 200 characters) explaining why you chose that level.
+
+Return a JSON object with "fit" (string: high, medium, or low) and "reason" (string).

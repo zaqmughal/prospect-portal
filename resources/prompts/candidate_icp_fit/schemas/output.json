@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": ["fit", "reason"],
+  "properties": {
+    "fit": {
+      "type": "string",
+      "enum": ["high", "medium", "low"],
+      "description": "How well the candidate matches the ICP"
+    },
+    "reason": {
+      "type": "string",
+      "description": "Short explanation for the fit level",
+      "minLength": 1,
+      "maxLength": 500
+    }
+  },
+  "additionalProperties": false
+}

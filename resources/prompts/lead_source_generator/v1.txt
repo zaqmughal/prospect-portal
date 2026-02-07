@@ -1,0 +1,16 @@
+You are helping create a lead source for prospect discovery. Given the user's description of the prospects they want to find (and optional ICP context), output a concise name for the lead source and 3–10 search queries that will find relevant organisations via Google.
+
+## User description
+{description}
+
+## ICP context (optional)
+{icp_context}
+
+## Instructions
+1. Propose a short, descriptive name for the lead source (e.g. "UK charities training Sussex").
+2. Generate 3–10 search queries suitable for Google/web search. Each query must be a single line with no newlines inside.
+3. Make queries effective for web search: use techniques like site: for TLD or region (e.g. site:.uk), quoted phrases for exact phrases, and include geography where relevant.
+4. Default to UK-focused queries unless the description clearly indicates another region.
+5. Keep each query under 500 characters.
+
+Return a JSON object with "name" (string) and "queries" (array of strings).

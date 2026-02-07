@@ -6,6 +6,7 @@ namespace App\Enums;
 
 enum LeadSourceRunStatus: string
 {
+    case Queued = 'queued';
     case Running = 'running';
     case Success = 'success';
     case Failed = 'failed';
@@ -14,6 +15,7 @@ enum LeadSourceRunStatus: string
     public function label(): string
     {
         return match ($this) {
+            self::Queued => 'Queued',
             self::Running => 'Running',
             self::Success => 'Success',
             self::Failed => 'Failed',
@@ -24,6 +26,7 @@ enum LeadSourceRunStatus: string
     public function color(): string
     {
         return match ($this) {
+            self::Queued => 'gray',
             self::Running => 'yellow',
             self::Success => 'green',
             self::Failed => 'red',

@@ -7,10 +7,8 @@ namespace App\Jobs;
 use App\Contracts\DiscoveryConnector;
 use App\Enums\DiscoveryCandidateStatus;
 use App\Enums\LeadSourceRunStatus;
-use App\Enums\LeadSourceRunTrigger;
 use App\Models\Account;
 use App\Models\DiscoveryCandidate;
-use App\Models\LeadSource;
 use App\Models\LeadSourceRun;
 use App\Services\Discovery\BlocklistService;
 use App\Services\Discovery\DomainNormaliser;
@@ -33,8 +31,7 @@ class RunLeadSourceDiscovery implements ShouldQueue
     public int $timeout = 600;
 
     public function __construct(
-        public LeadSource $leadSource,
-        public string $trigger = 'manual'
+        public LeadSourceRun $run
     ) {}
 
     public function handle(
@@ -42,13 +39,14 @@ class RunLeadSourceDiscovery implements ShouldQueue
         DomainNormaliser $domainNormaliser,
         BlocklistService $blocklistService
     ): void {
-        $run = LeadSourceRun::create([
-            'lead_source_id' => $this->leadSource->id,
-            'trigger' => $this->trigger === 'scheduled' ? LeadSourceRunTrigger::Scheduled : LeadSourceRunTrigger::Manual,
-            'provider' => config('discovery.default_provider', 'bing'),
-            'config_snapshot' => $this->leadSource->config,
-            'started_at' => now(),
+        $run = $this->run;
+        $leadSource = $run->leadSource;
+
+        $run->update([
             'status' => LeadSourceRunStatus::Running,
+            'started_at' => $run->started_at ?? now(),
+            'provider' => config('discovery.default_provider', 'serpapi'),
+            'config_snapshot' => $leadSource->config,
         ]);
 
         $errors = [];
@@ -57,7 +55,7 @@ class RunLeadSourceDiscovery implements ShouldQueue
         $queriesExecuted = 0;
 
         try {
-            $result = $connector->run($this->leadSource);
+            $result = $connector->run($leadSource);
             $errors = $result->getErrors();
             $throttledCount = $result->rateLimitHit ? 1 : 0;
             $items = $result->getItems();
@@ -81,6 +79,8 @@ class RunLeadSourceDiscovery implements ShouldQueue
                         'url' => $url,
                         'title' => $item['title'] ?? null,
                         'snippet' => $item['snippet'] ?? null,
+                        'query' => $item['query'] ?? null,
+                        'position' => $item['position'] ?? null,
                         'status' => DiscoveryCandidateStatus::Blocked,
                         'reason' => 'Invalid URL (non-http(s))',
                     ]);
@@ -97,6 +97,8 @@ class RunLeadSourceDiscovery implements ShouldQueue
                         'url' => $url,
                         'title' => $item['title'] ?? null,
                         'snippet' => $item['snippet'] ?? null,
+                        'query' => $item['query'] ?? null,
+                        'position' => $item['position'] ?? null,
                         'status' => DiscoveryCandidateStatus::Blocked,
                         'reason' => 'Invalid or missing TLD',
                     ]);
@@ -111,7 +113,7 @@ class RunLeadSourceDiscovery implements ShouldQueue
                     continue;
                 }
 
-                if (Account::where('domain', $domain)->where('user_id', $this->leadSource->user_id)->exists()) {
+                if (Account::where('domain', $domain)->where('user_id', $leadSource->user_id)->exists()) {
                     if (! isset($domainsInRun[$domain])) {
                         DiscoveryCandidate::create([
                             'lead_source_run_id' => $run->id,
@@ -119,6 +121,8 @@ class RunLeadSourceDiscovery implements ShouldQueue
                             'url' => $url,
                             'title' => $item['title'] ?? null,
                             'snippet' => $item['snippet'] ?? null,
+                            'query' => $item['query'] ?? null,
+                            'position' => $item['position'] ?? null,
                             'status' => DiscoveryCandidateStatus::Duplicate,
                             'reason' => 'Account already exists',
                         ]);
@@ -137,6 +141,8 @@ class RunLeadSourceDiscovery implements ShouldQueue
                             'url' => $url,
                             'title' => $item['title'] ?? null,
                             'snippet' => $item['snippet'] ?? null,
+                            'query' => $item['query'] ?? null,
+                            'position' => $item['position'] ?? null,
                             'status' => DiscoveryCandidateStatus::Blocked,
                             'reason' => 'Blocklisted domain',
                         ]);
@@ -153,6 +159,8 @@ class RunLeadSourceDiscovery implements ShouldQueue
                     'url' => $url,
                     'title' => $item['title'] ?? null,
                     'snippet' => $item['snippet'] ?? null,
+                    'query' => $item['query'] ?? null,
+                    'position' => $item['position'] ?? null,
                     'status' => DiscoveryCandidateStatus::New,
                     'reason' => null,
                 ]);
@@ -172,7 +180,7 @@ class RunLeadSourceDiscovery implements ShouldQueue
                 'completed_at' => now(),
             ]);
 
-            $this->leadSource->update([
+            $leadSource->update([
                 'last_run_at' => $run->started_at,
                 'last_run_status' => 'success',
                 'last_run_domains_found' => $domainsFound,
@@ -184,7 +192,7 @@ class RunLeadSourceDiscovery implements ShouldQueue
             }
 
             Log::info('Lead source discovery run completed', [
-                'lead_source_id' => $this->leadSource->id,
+                'lead_source_id' => $leadSource->id,
                 'run_id' => $run->id,
                 'domains_found' => $domainsFound,
             ]);
@@ -195,13 +203,13 @@ class RunLeadSourceDiscovery implements ShouldQueue
                 'error_message' => $e->getMessage(),
                 'query_errors' => $errors,
             ]);
-            $this->leadSource->update([
+            $leadSource->update([
                 'last_run_at' => $run->started_at,
                 'last_run_status' => 'failed',
                 'last_run_domains_found' => null,
             ]);
             Log::error('Lead source discovery run failed', [
-                'lead_source_id' => $this->leadSource->id,
+                'lead_source_id' => $leadSource->id,
                 'run_id' => $run->id,
                 'error' => $e->getMessage(),
             ]);
