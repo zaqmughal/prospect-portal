@@ -35,7 +35,7 @@ class PromoteDiscoveryCandidates implements ShouldQueue
     public function handle(UrlCanonicaliser $urlCanonicaliser): void
     {
         $candidates = $this->leadSourceRun->candidates()
-            ->where('status', DiscoveryCandidateStatus::Approved)
+            ->where('status', DiscoveryCandidateStatus::Approved->value)
             ->get();
 
         $domainsCreated = 0;
