@@ -7,12 +7,22 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["type", "severity", "title", "description", "evidence"],
+        "required": ["severity", "title", "description"],
         "properties": {
+          "category": {
+            "type": "string",
+            "enum": ["content", "ux", "technology", "opportunity"],
+            "description": "Category of signal (new format)"
+          },
           "type": {
             "type": "string",
             "enum": ["content", "ux", "tech", "opportunity"],
-            "description": "The category of signal"
+            "description": "Category of signal (legacy format)"
+          },
+          "signal_type": {
+            "type": "string",
+            "maxLength": 80,
+            "description": "Short snake_case identifier"
           },
           "severity": {
             "type": "string",
@@ -29,13 +39,29 @@
             "maxLength": 500,
             "description": "Explanation of the signal and its impact"
           },
+          "evidence_snippet": {
+            "type": "string",
+            "maxLength": 300,
+            "description": "Direct quote or snippet from the content (new format)"
+          },
           "evidence": {
             "type": "string",
             "maxLength": 300,
-            "description": "Direct quote or snippet from the content"
+            "description": "Direct quote or snippet from the content (legacy format)"
+          },
+          "evidence_location": {
+            "type": "string",
+            "maxLength": 100,
+            "description": "Optional page or section reference"
+          },
+          "confidence": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "Confidence score 0-1"
           }
         },
-        "additionalProperties": false
+        "additionalProperties": true
       }
     }
   },
