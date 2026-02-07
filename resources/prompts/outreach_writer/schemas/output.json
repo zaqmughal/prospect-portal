@@ -15,11 +15,11 @@
         "subject": {
           "type": "string",
           "maxLength": 100,
-          "description": "Email subject line"
+          "description": "Email subject line (required, non-empty)"
         },
         "body": {
           "type": "string",
-          "description": "Email body content"
+          "description": "Email body content (required, non-empty)"
         }
       },
       "additionalProperties": false
