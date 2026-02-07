@@ -8,6 +8,7 @@ use App\Enums\PipelineStage;
 use App\Enums\ResearchStatus;
 use App\Jobs\RunAccountResearch;
 use App\Models\Account;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Livewire\Attributes\Url;
@@ -82,7 +83,49 @@ class Index extends Component
         $this->dispatch('notify', message: 'Account deleted');
     }
 
-    public function render(): View
+    public function bulkDelete(): void
+    {
+        if (empty($this->selected)) {
+            return;
+        }
+
+        $count = Account::where('user_id', Auth::id())
+            ->whereIn('id', $this->selected)
+            ->delete();
+
+        $this->selected = [];
+        $this->dispatch('notify', message: $count === 1
+            ? '1 account deleted'
+            : "{$count} accounts deleted");
+    }
+
+    /**
+     * Toggle select-all for the current page. Pass current page IDs from the view.
+     *
+     * @param  array<int|string>  $pageIds
+     */
+    public function toggleSelectAllOnPage(array $pageIds): void
+    {
+        $pageIds = array_map('intval', $pageIds);
+        $allSelected = count($pageIds) > 0 && count(array_intersect($this->selected, $pageIds)) === count($pageIds);
+
+        if ($allSelected) {
+            $this->selected = array_values(array_diff($this->selected, $pageIds));
+        } else {
+            $this->selected = array_values(array_unique(array_merge($this->selected, $pageIds)));
+        }
+    }
+
+    public function selectAllInList(): void
+    {
+        $ids = $this->getAccountsQuery()->limit(500)->pluck('id')->all();
+        $this->selected = array_values($ids);
+        $this->dispatch('notify', message: count($ids) === 1
+            ? '1 account selected'
+            : count($ids).' accounts selected');
+    }
+
+    private function getAccountsQuery(): Builder
     {
         $query = Account::where('user_id', Auth::id());
 
@@ -102,10 +145,21 @@ class Index extends Component
             $query->where('research_status', $this->researchStatus);
         }
 
-        $query->orderBy($this->sortBy, $this->sortDir);
+        return $query->orderBy($this->sortBy, $this->sortDir);
+    }
+
+    public function render(): View
+    {
+        $query = $this->getAccountsQuery();
+        $accounts = $query->paginate(25);
+        $pageIds = $accounts->pluck('id')->all();
+        $allOnPageSelected = count($pageIds) > 0 && count(array_intersect($this->selected, $pageIds)) === count($pageIds);
 
         return view('livewire.accounts.index', [
-            'accounts' => $query->paginate(25),
+            'accounts' => $accounts,
+            'pageIds' => $pageIds,
+            'allOnPageSelected' => $allOnPageSelected,
+            'totalAccountsCount' => min(500, $query->count()),
             'pipelineStages' => PipelineStage::cases(),
             'researchStatuses' => ResearchStatus::cases(),
         ]);

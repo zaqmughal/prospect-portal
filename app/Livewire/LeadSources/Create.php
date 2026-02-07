@@ -7,7 +7,9 @@ namespace App\Livewire\LeadSources;
 use App\Enums\LeadSourceCadence;
 use App\Enums\LeadSourceStatus;
 use App\Enums\LeadSourceType;
+use App\Models\Icp;
 use App\Models\LeadSource;
+use App\Services\AI\OpenAIService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -27,6 +29,14 @@ class Create extends Component
 
     public string $status = 'enabled';
 
+    /** Description for AI generation ("Describe the prospects you want to find"). */
+    public string $aiDescription = '';
+
+    /** Optional ICP id for AI context; empty string means "None". */
+    public string $icpId = '';
+
+    public bool $generating = false;
+
     public function addQuery(): void
     {
         $this->queries[] = '';
@@ -36,6 +46,62 @@ class Create extends Component
     {
         unset($this->queries[$index]);
         $this->queries = array_values($this->queries);
+    }
+
+    public function generateWithAi(): void
+    {
+        $this->validate([
+            'aiDescription' => ['required', 'string', 'max:2000'],
+        ], [
+            'aiDescription.required' => 'Please describe the prospects you want to find.',
+        ]);
+
+        $this->generating = true;
+        $this->resetValidation();
+
+        $icpContext = 'No ICP selected';
+        if ($this->icpId !== '') {
+            $icp = Icp::find($this->icpId);
+            if ($icp) {
+                $parts = [$icp->name];
+                if (! empty($icp->sectors) && is_array($icp->sectors)) {
+                    $parts[] = 'Sectors: '.implode(', ', $icp->sectors);
+                }
+                if (! empty($icp->size_bands) && is_array($icp->size_bands)) {
+                    $parts[] = 'Size bands: '.implode(', ', $icp->size_bands);
+                }
+                $icpContext = implode('. ', $parts);
+            }
+        }
+
+        /** @var OpenAIService $openAi */
+        $openAi = app(OpenAIService::class);
+        $result = $openAi->runStandalone('lead_source_generator', [
+            'description' => trim($this->aiDescription),
+            'icp_context' => $icpContext,
+        ]);
+
+        $this->generating = false;
+
+        if (! $result['success']) {
+            $this->addError('aiDescription', $result['error'] ?? 'AI generation failed. Please try again.');
+
+            return;
+        }
+
+        $data = $result['data'];
+        if (! is_array($data) || empty($data['queries']) || ! is_array($data['queries'])) {
+            $this->addError('aiDescription', 'AI did not return valid queries. Please try again.');
+
+            return;
+        }
+
+        $this->name = isset($data['name']) && is_string($data['name']) ? trim($data['name']) : trim($this->aiDescription);
+        $this->queries = array_values(array_filter(array_map('trim', $data['queries'])));
+        if (empty($this->queries)) {
+            $this->queries = [''];
+        }
+        $this->dispatch('notify', message: 'Suggestions generated. Edit below and save when ready.');
     }
 
     public function save(): mixed
@@ -80,6 +146,7 @@ class Create extends Component
         return view('livewire.lead-sources.create', [
             'cadences' => LeadSourceCadence::cases(),
             'statuses' => LeadSourceStatus::cases(),
+            'icps' => Icp::orderBy('name')->get(),
         ]);
     }
 }

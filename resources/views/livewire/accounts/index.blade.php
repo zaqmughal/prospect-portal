@@ -22,16 +22,31 @@
                     @endforeach
                 </select>
             </div>
-            @if(count($selected) > 0)
+            @if($totalAccountsCount > 0)
                 <div>
-                    <button wire:click="runSelectedResearch" wire:confirm="Run research on {{ count($selected) }} selected accounts?"
-                        class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700 focus:bg-green-700">
-                        Research Selected ({{ count($selected) }})
+                    <button type="button" wire:click="selectAllInList" class="text-sm text-blue-600 hover:text-blue-900 hover:underline">
+                        Select all {{ $totalAccountsCount }} {{ $totalAccountsCount === 1 ? 'item' : 'items' }}
                     </button>
                 </div>
             @endif
         </div>
     </div>
+
+    @if(count($selected) > 0)
+        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-4 p-4">
+            <div class="flex items-center gap-4">
+                <span class="text-sm text-gray-700">{{ count($selected) }} {{ count($selected) === 1 ? 'account' : 'accounts' }} selected</span>
+                <button wire:click="runSelectedResearch" wire:confirm="Run research on {{ count($selected) }} selected accounts?"
+                    class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700 focus:bg-green-700">
+                    Research selected
+                </button>
+                <button wire:click="bulkDelete" wire:confirm="Are you sure you want to delete {{ count($selected) }} selected account(s)? This cannot be undone."
+                    class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 focus:bg-red-700">
+                    Delete selected
+                </button>
+            </div>
+        </div>
+    @endif
 
     <!-- Table -->
     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
@@ -39,8 +54,13 @@
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
                     <tr>
-                        <th scope="col" class="px-6 py-3 text-left">
-                            <input type="checkbox" wire:model.live="selectAll" class="rounded border-gray-300">
+                        <th scope="col" class="px-6 py-3 text-left w-10 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <span class="sr-only">Select all</span>
+                            <input type="checkbox"
+                                class="rounded border-gray-300"
+                                aria-label="Select all on this page"
+                                @checked($allOnPageSelected)
+                                wire:click="toggleSelectAllOnPage({{ json_encode($pageIds) }})">
                         </th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer" wire:click="sortBy('name')">
                             Account
