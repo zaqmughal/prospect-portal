@@ -3,14 +3,33 @@
 use App\Http\Controllers\ExportController;
 use App\Models\LeadSource;
 use App\Models\LeadSourceRun;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
-Route::redirect('/', '/dashboard');
+Route::get('/', function () {
+    if (Auth::check()) {
+        return redirect()->route('dashboard');
+    }
+
+    return view('welcome');
+})->name('home');
+
+// Invitation acceptance (accessible without auth)
+Route::get('invitations/{token}', function (string $token) {
+    return view('organizations.accept-invitation', ['token' => $token]);
+})->name('invitations.accept');
+
+Route::middleware(['auth'])->group(function () {
+    Route::view('organizations/create', 'organizations.create')->name('organizations.create');
+});
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::view('dashboard', 'dashboard')->name('dashboard');
     Route::view('profile', 'profile')->name('profile');
     Route::view('settings', 'settings')->name('settings');
+    Route::view('settings/team', 'settings.team')->name('settings.team');
+    Route::view('settings/billing', 'settings.billing')->name('settings.billing');
+    Route::view('settings/usage', 'settings.usage')->name('settings.usage');
 
     // Accounts
     Route::view('accounts', 'accounts.index')->name('accounts.index');
@@ -31,11 +50,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // ICPs
     Route::view('icps', 'icps.index')->name('icps.index');
     Route::view('icps/create', 'icps.create')->name('icps.create');
+    Route::view('icps/generate', 'icps.generate')->name('icps.generate');
     Route::view('icps/{icp}/edit', 'icps.edit')->name('icps.edit');
 
     // Playbooks
     Route::view('playbooks', 'playbooks.index')->name('playbooks.index');
     Route::view('playbooks/create', 'playbooks.create')->name('playbooks.create');
+    Route::view('playbooks/generate', 'playbooks.generate')->name('playbooks.generate');
     Route::view('playbooks/{playbook}/edit', 'playbooks.edit')->name('playbooks.edit');
 
     // Exports

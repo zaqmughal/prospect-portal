@@ -41,11 +41,15 @@ class PromoteDiscoveryCandidates implements ShouldQueue
         $domainsCreated = 0;
         $leadSource = $this->leadSourceRun->leadSource;
         $userId = $leadSource->user_id;
+        $orgId = $leadSource->organization_id;
         $configSnapshot = $this->leadSourceRun->config_snapshot ?? [];
         $queries = $configSnapshot['queries'] ?? [];
 
         foreach ($candidates as $candidate) {
-            $account = Account::where('domain', $candidate->domain)->where('user_id', $userId)->first();
+            $account = Account::withoutGlobalScope('organization')
+                ->where('domain', $candidate->domain)
+                ->where('organization_id', $orgId)
+                ->first();
 
             if ($account !== null) {
                 if ($urlCanonicaliser->isBetterThan($candidate->url, $account->url)) {
@@ -63,6 +67,7 @@ class PromoteDiscoveryCandidates implements ShouldQueue
 
             $name = $candidate->title ?? $candidate->domain;
             $account = Account::create([
+                'organization_id' => $orgId,
                 'user_id' => $userId,
                 'lead_source_id' => $leadSource->id,
                 'name' => $name,

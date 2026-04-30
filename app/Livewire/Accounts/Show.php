@@ -8,7 +8,6 @@ use App\Enums\PipelineStage;
 use App\Enums\ResearchStatus;
 use App\Jobs\RunAccountResearch;
 use App\Models\Account;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
@@ -25,7 +24,7 @@ class Show extends Component
     public function mount(int $accountId): void
     {
         $this->accountId = $accountId;
-        $this->account = Account::where('user_id', Auth::id())
+        $this->account = Account::query()
             ->with(['signalEvents', 'researchRuns' => fn ($q) => $q->latest()->limit(5), 'latestBrief', 'outreachAssets'])
             ->findOrFail($accountId);
     }

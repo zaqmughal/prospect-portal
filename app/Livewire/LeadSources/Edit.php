@@ -85,7 +85,7 @@ class Edit extends Component
 
     private function authorizeLeadSource(LeadSource $leadSource): void
     {
-        if ($leadSource->user_id !== Auth::id()) {
+        if ($leadSource->organization_id !== Auth::user()->current_organization_id) {
             abort(403);
         }
     }

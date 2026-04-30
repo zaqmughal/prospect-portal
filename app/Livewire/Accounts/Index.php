@@ -8,8 +8,8 @@ use App\Enums\PipelineStage;
 use App\Enums\ResearchStatus;
 use App\Jobs\RunAccountResearch;
 use App\Models\Account;
+use App\Models\LeadSource;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -34,12 +34,29 @@ class Index extends Component
     #[Url]
     public string $sortDir = 'desc';
 
+    #[Url]
+    public string $leadSourceId = '';
+
+    /** 'none' | 'lead_source' */
+    #[Url]
+    public string $groupBy = '';
+
     /**
      * @var array<int>
      */
     public array $selected = [];
 
     public function updatingSearch(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingLeadSourceId(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingGroupBy(): void
     {
         $this->resetPage();
     }
@@ -56,7 +73,7 @@ class Index extends Component
 
     public function runResearch(int $accountId): void
     {
-        $account = Account::where('user_id', Auth::id())->findOrFail($accountId);
+        $account = Account::findOrFail($accountId);
         $account->update(['research_status' => ResearchStatus::Queued]);
         RunAccountResearch::dispatch($account, 'manual');
         $this->dispatch('notify', message: 'Research queued for '.$account->name);
@@ -64,7 +81,7 @@ class Index extends Component
 
     public function runSelectedResearch(): void
     {
-        $accounts = Account::where('user_id', Auth::id())
+        $accounts = Account::query()
             ->whereIn('id', $this->selected)
             ->get();
 
@@ -79,7 +96,7 @@ class Index extends Component
 
     public function delete(int $accountId): void
     {
-        Account::where('user_id', Auth::id())->where('id', $accountId)->delete();
+        Account::where('id', $accountId)->delete();
         $this->dispatch('notify', message: 'Account deleted');
     }
 
@@ -89,7 +106,7 @@ class Index extends Component
             return;
         }
 
-        $count = Account::where('user_id', Auth::id())
+        $count = Account::query()
             ->whereIn('id', $this->selected)
             ->delete();
 
@@ -127,7 +144,7 @@ class Index extends Component
 
     private function getAccountsQuery(): Builder
     {
-        $query = Account::where('user_id', Auth::id());
+        $query = Account::query();
 
         if ($this->search) {
             $query->where(function ($q) {
@@ -145,23 +162,61 @@ class Index extends Component
             $query->where('research_status', $this->researchStatus);
         }
 
-        return $query->orderBy($this->sortBy, $this->sortDir);
+        if ($this->leadSourceId !== '') {
+            if ($this->leadSourceId === 'none') {
+                $query->whereNull('lead_source_id');
+            } else {
+                $query->where('lead_source_id', (int) $this->leadSourceId);
+            }
+        }
+
+        if ($this->groupBy === 'lead_source') {
+            $query->orderByRaw('lead_source_id IS NULL')->orderBy('lead_source_id');
+        }
+        $query->orderBy($this->sortBy, $this->sortDir);
+
+        return $query;
     }
 
     public function render(): View
     {
         $query = $this->getAccountsQuery();
-        $accounts = $query->paginate(25);
+        $accounts = $query->with('leadSource')->paginate(25);
         $pageIds = $accounts->pluck('id')->all();
         $allOnPageSelected = count($pageIds) > 0 && count(array_intersect($this->selected, $pageIds)) === count($pageIds);
 
+        $accountsGrouped = [];
+        if ($this->groupBy === 'lead_source' && $accounts->isNotEmpty()) {
+            foreach ($accounts as $account) {
+                $key = $account->lead_source_id
+                    ? (string) $account->leadSource?->name
+                    : 'No lead source';
+                if (! isset($accountsGrouped[$key])) {
+                    $accountsGrouped[$key] = [];
+                }
+                $accountsGrouped[$key][] = $account;
+            }
+        }
+
+        $leadSources = LeadSource::orderBy('name')->get();
+
+        $hasAnyAccounts = Account::query()->exists();
+        $hasFilters = $this->search !== ''
+            || $this->pipelineStage !== ''
+            || $this->researchStatus !== ''
+            || $this->leadSourceId !== '';
+
         return view('livewire.accounts.index', [
             'accounts' => $accounts,
+            'accountsGrouped' => $accountsGrouped,
             'pageIds' => $pageIds,
             'allOnPageSelected' => $allOnPageSelected,
             'totalAccountsCount' => min(500, $query->count()),
             'pipelineStages' => PipelineStage::cases(),
             'researchStatuses' => ResearchStatus::cases(),
+            'leadSources' => $leadSources,
+            'hasAnyAccounts' => $hasAnyAccounts,
+            'hasFilters' => $hasFilters,
         ]);
     }
 }

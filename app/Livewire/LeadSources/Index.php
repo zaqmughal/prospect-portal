@@ -9,7 +9,6 @@ use App\Enums\LeadSourceRunTrigger;
 use App\Jobs\RunLeadSourceDiscovery;
 use App\Models\LeadSource;
 use App\Models\LeadSourceRun;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -22,7 +21,7 @@ class Index extends Component
 
     public function runNow(int $leadSourceId): void
     {
-        $source = LeadSource::where('user_id', Auth::id())->findOrFail($leadSourceId);
+        $source = LeadSource::query()->findOrFail($leadSourceId);
         $run = LeadSourceRun::create([
             'lead_source_id' => $source->id,
             'trigger' => LeadSourceRunTrigger::Manual,
@@ -35,7 +34,7 @@ class Index extends Component
 
     public function delete(int $leadSourceId): void
     {
-        LeadSource::where('user_id', Auth::id())->findOrFail($leadSourceId)->delete();
+        LeadSource::query()->findOrFail($leadSourceId)->delete();
         $this->dispatch('notify', message: 'Lead source deleted');
     }
 
@@ -45,7 +44,7 @@ class Index extends Component
             return;
         }
 
-        $count = LeadSource::where('user_id', Auth::id())
+        $count = LeadSource::query()
             ->whereIn('id', $this->selected)
             ->delete();
 
@@ -74,7 +73,7 @@ class Index extends Component
 
     public function render(): View
     {
-        $leadSources = LeadSource::where('user_id', Auth::id())
+        $leadSources = LeadSource::query()
             ->with('latestRun')
             ->orderBy('name')
             ->get();

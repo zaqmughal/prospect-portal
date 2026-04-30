@@ -7,6 +7,7 @@ namespace App\Models;
 use App\Enums\LeadSourceCadence;
 use App\Enums\LeadSourceStatus;
 use App\Enums\LeadSourceType;
+use App\Models\Concerns\BelongsToOrganization;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -15,9 +16,11 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class LeadSource extends Model
 {
+    use BelongsToOrganization;
     use HasFactory;
 
     protected $fillable = [
+        'organization_id',
         'user_id',
         'name',
         'type',

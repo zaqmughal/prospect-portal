@@ -6,6 +6,7 @@ namespace App\Models;
 
 use App\Enums\PipelineStage;
 use App\Enums\ResearchStatus;
+use App\Models\Concerns\BelongsToOrganization;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -15,10 +16,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Account extends Model
 {
+    use BelongsToOrganization;
     use HasFactory;
     use SoftDeletes;
 
     protected $fillable = [
+        'organization_id',
         'user_id',
         'lead_source_id',
         'name',

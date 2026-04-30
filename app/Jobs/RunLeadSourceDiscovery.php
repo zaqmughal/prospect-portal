@@ -113,7 +113,7 @@ class RunLeadSourceDiscovery implements ShouldQueue
                     continue;
                 }
 
-                if (Account::where('domain', $domain)->where('user_id', $leadSource->user_id)->exists()) {
+                if (Account::withoutGlobalScope('organization')->where('domain', $domain)->where('organization_id', $leadSource->organization_id)->exists()) {
                     if (! isset($domainsInRun[$domain])) {
                         DiscoveryCandidate::create([
                             'lead_source_run_id' => $run->id,

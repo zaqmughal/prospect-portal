@@ -4,18 +4,20 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToOrganization;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Icp extends Model
 {
+    use BelongsToOrganization;
     use HasFactory;
 
     protected $fillable = [
+        'organization_id',
         'name',
         'description',
         'sectors',
-        'size_bands',
         'signals',
         'scoring_weights',
         'is_default',
@@ -28,7 +30,6 @@ class Icp extends Model
     {
         return [
             'sectors' => 'array',
-            'size_bands' => 'array',
             'signals' => 'array',
             'scoring_weights' => 'array',
             'is_default' => 'boolean',
@@ -37,6 +38,6 @@ class Icp extends Model
 
     public static function getDefault(): ?self
     {
-        return self::where('is_default', true)->first();
+        return static::where('is_default', true)->first();
     }
 }

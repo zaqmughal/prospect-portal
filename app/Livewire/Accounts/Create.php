@@ -45,7 +45,7 @@ class Create extends Component
         $domain = Account::normalizeDomain($validated['url']);
 
         // Check for duplicate domain
-        $existing = Account::where('user_id', Auth::id())
+        $existing = Account::query()
             ->where('domain', $domain)
             ->first();
 

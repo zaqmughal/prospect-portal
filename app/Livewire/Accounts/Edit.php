@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Livewire\Accounts;
 
 use App\Models\Account;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
@@ -30,7 +29,7 @@ class Edit extends Component
     public function mount(int $accountId): void
     {
         $this->accountId = $accountId;
-        $account = Account::where('user_id', Auth::id())->findOrFail($accountId);
+        $account = Account::query()->findOrFail($accountId);
 
         $this->name = $account->name;
         $this->url = $account->url;
@@ -59,7 +58,7 @@ class Edit extends Component
     {
         $validated = $this->validate();
 
-        $account = Account::where('user_id', Auth::id())->findOrFail($this->accountId);
+        $account = Account::query()->findOrFail($this->accountId);
 
         $account->update([
             'name' => $validated['name'],

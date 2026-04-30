@@ -6,7 +6,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Account;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use ZipArchive;
 
@@ -17,7 +16,7 @@ class ExportController extends Controller
      */
     public function shortlistCsv(): StreamedResponse
     {
-        $accounts = Account::where('user_id', Auth::id())
+        $accounts = Account::query()
             ->where('lead_score', '>', 0)
             ->orderByDesc('lead_score')
             ->limit(50)
@@ -73,7 +72,7 @@ class ExportController extends Controller
      */
     public function outreachZip(): Response
     {
-        $accounts = Account::where('user_id', Auth::id())
+        $accounts = Account::query()
             ->where('lead_score', '>', 0)
             ->whereHas('outreachAssets')
             ->orderByDesc('lead_score')

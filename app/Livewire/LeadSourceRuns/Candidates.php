@@ -33,7 +33,8 @@ class Candidates extends Component
 
     public function mount(LeadSourceRun $run): void
     {
-        if ($run->leadSource->user_id !== Auth::id()) {
+        $orgId = Auth::user()->current_organization_id;
+        if ($run->leadSource->organization_id !== $orgId) {
             abort(403);
         }
         $this->run = $run;
@@ -82,6 +83,25 @@ class Candidates extends Component
             ->update(['status' => DiscoveryCandidateStatus::Approved]);
         $this->selected = [];
         $this->dispatch('notify', message: 'Selected candidates approved');
+    }
+
+    /**
+     * Approve all candidates in this run that have status New and ICP fit "high".
+     */
+    public function approveAllHighIcpFit(): void
+    {
+        $count = $this->run->candidates()
+            ->where('status', DiscoveryCandidateStatus::New)
+            ->where('icp_fit', 'high')
+            ->update(['status' => DiscoveryCandidateStatus::Approved]);
+
+        if ($count === 0) {
+            $this->dispatch('notify', message: 'No high ICP fit candidates to approve.', type: 'warning');
+
+            return;
+        }
+
+        $this->dispatch('notify', message: "{$count} high ICP fit candidate(s) approved.");
     }
 
     /**
@@ -223,21 +243,17 @@ class Candidates extends Component
     }
 
     /**
-     * Build a short text summary of the ICP (sectors and size bands) for the prompt.
+     * Build a short text summary of the ICP (sectors) for the prompt.
      */
     private function buildIcpSummary(Icp $icp): string
     {
         $parts = [];
         $sectors = $icp->sectors ?? [];
-        if ($sectors !== []) {
+        if (is_array($sectors) && $sectors !== []) {
             $parts[] = 'Sectors: '.implode(', ', array_map('strval', $sectors));
         }
-        $sizeBands = $icp->size_bands ?? [];
-        if ($sizeBands !== []) {
-            $parts[] = 'Size bands: '.implode(', ', array_map('strval', $sizeBands));
-        }
         if ($parts === []) {
-            return 'No sectors or size bands specified.';
+            return 'No sectors specified.';
         }
 
         return implode('. ', $parts);
@@ -263,12 +279,18 @@ class Candidates extends Component
         $allSelected = count($selectableIds) > 0
             && count(array_intersect($this->selected, $selectableIds)) === count($selectableIds);
 
+        $highIcpFitNewCount = (int) $this->run->candidates()
+            ->where('status', DiscoveryCandidateStatus::New)
+            ->where('icp_fit', 'high')
+            ->count();
+
         return view('livewire.lead-source-runs.candidates', [
             'candidates' => $candidates,
             'statuses' => DiscoveryCandidateStatus::cases(),
             'detailsCandidate' => $detailsCandidate,
             'selectableIds' => $selectableIds,
             'allSelected' => $allSelected,
+            'highIcpFitNewCount' => $highIcpFitNewCount,
         ]);
     }
 }
