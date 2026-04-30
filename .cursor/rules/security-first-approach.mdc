@@ -26,6 +26,18 @@ alwaysApply: true
 - **CSRF Protection**: Include CSRF tokens in all forms and AJAX requests
 - **Security Headers**: Implement appropriate security headers (CSP, HSTS, etc.)
 
+## 🍃 **Laravel-Specific Security**
+- **Mass Assignment**: Always use `$fillable` or `$guarded` on Eloquent models; never mass-assign user input without an explicit whitelist; prefer Form Request validation then explicit attribute assignment in controllers
+- **Passwords**: Use `Hash::make()` and `Hash::check()` only; never store or log plaintext passwords
+- **Environment & Config**: Never commit `.env`; ensure `APP_DEBUG=false` in production; never put secrets in committed config files
+- **File Uploads**: Validate MIME type and size via Laravel validation; store via `Storage` outside web root or with random names; never execute uploaded files; use `Storage::putFile()` and validated rules
+- **Blade & XSS**: Prefer `{{ }}` (auto-escaped); use `{!! !!}` only when necessary with sanitized or trusted content; **never** `{!! $userInput !!}` or unescaped user data
+- **Logging**: Do not log passwords, tokens, or full PII; redact or omit sensitive fields
+- **API Auth**: Use Sanctum or Passport for API authentication; never pass tokens in URL query params; implement token revocation
+- **Session**: Use secure, HTTP-only, SameSite cookies; call `Auth::guard()->regenerateSession()` on login to prevent session fixation
+- **Signed URLs**: Use signed or temporary URLs for sensitive one-time actions (e.g. password reset, email verification)
+- **Dependency Security**: Run `composer audit` and `npm audit`; fix or document accepted vulnerabilities before release
+
 ## ⚠️ **Security Red Flags**
 - **NEVER suggest hardcoded credentials** or secrets in code
 - **ALWAYS require proper authentication** for new endpoints

@@ -15,15 +15,21 @@ alwaysApply: false
 - Support screen readers with proper ARIA attributes
 - Test with accessibility tools and assistive technologies
 - Ensure focus indicators are visible and logical
+- **WCAG 2.2 (new)**: Focus Not Obscured (2.4.11); Dragging Movements have keyboard alternative (2.5.7); Target Size minimum 24×24 CSS px (2.5.8); Redundant Entry avoided where applicable (3.3.8)
+- **Language**: Set `lang` on `<html>`; use `lang` on elements in a different language
 
 ## 🎨 **Frontend Accessibility Guidelines**
 - **Semantic HTML**: Use proper HTML5 semantic elements (header, nav, main, section, article, aside, footer)
+- **Skip Links**: Provide "Skip to main content" (or equivalent) before repeated navigation
 - **Form Labels**: Associate all form controls with descriptive labels
+- **Form Errors**: Associate validation errors with controls (e.g. `aria-describedby`, `id`/`for`); ensure errors are announced to screen readers
 - **Alt Text**: Provide meaningful alternative text for all images
 - **Color Contrast**: Ensure sufficient contrast ratios for text and background colors
 - **Keyboard Navigation**: Ensure all interactive elements are keyboard accessible
-- **Focus Management**: Implement logical focus order and visible focus indicators
+- **Focus Management**: Implement logical focus order and visible focus indicators; in modals/dialogs trap focus and return focus on close; never focus removed elements
+- **Reduced Motion**: Respect `prefers-reduced-motion: reduce` for animations and transitions (disable or reduce motion when requested)
 - **ARIA Attributes**: Use ARIA labels, roles, and properties appropriately
+- **Dynamic Content**: Use `aria-live` (or equivalent) for content that updates without full page reload (e.g. Livewire, Inertia, AJAX)
 - **Screen Reader Support**: Test with screen readers and assistive technologies
 
 ## 🧪 **Accessibility Testing**
@@ -37,10 +43,14 @@ alwaysApply: false
 
 ## 📋 **Accessibility Checklist**
 - ✅ **Semantic HTML structure** implemented
-- ✅ **Form labels** properly associated
+- ✅ **Skip link** present before main navigation
+- ✅ **Form labels and error association** (aria-describedby / id-for) implemented
 - ✅ **Alt text** provided for images
 - ✅ **Color contrast** meets WCAG standards
+- ✅ **Target size** minimum 24×24 px for touch/click targets
 - ✅ **Keyboard navigation** works for all elements
-- ✅ **Focus indicators** are visible and logical
-- ✅ **ARIA attributes** used appropriately
+- ✅ **Focus indicators** are visible and logical; focus not obscured
+- ✅ **Reduced motion** respected (prefers-reduced-motion)
+- ✅ **ARIA attributes and live regions** used appropriately for dynamic content
+- ✅ **Language** (lang) set on page and on language changes
 - ✅ **Screen reader testing** completed

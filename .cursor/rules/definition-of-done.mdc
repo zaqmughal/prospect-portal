@@ -30,7 +30,7 @@ Every task must meet these requirements before completion:
 ✅ **CSRF protection** - Cross-site request forgery protection enabled  
 
 ### **Documentation & Communication**
-✅ **CHANGELOG updated** - Reference this profile version  
+✅ **CHANGELOG updated** - Reference this project version  
 ✅ **API documentation** - New endpoints documented with examples  
 ✅ **Inline comments** - Complex logic explained clearly  
 ✅ **Setup instructions** - Environment configuration documented  

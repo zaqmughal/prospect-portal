@@ -1,8 +1,10 @@
-# Project Context & Architecture
+---
+description: Project context and architecture for Laravel platform
+globs: ["**/*"]
+alwaysApply: true
+---
 
-## 🏗️ **Scope**: All project files and development work
-## 🎯 **Type**: Always Applied
-## 🎯 **Purpose**: Comprehensive project context and architectural understanding
+# Project Context & Architecture
 
 ## 🏢 **Platform Overview**
 

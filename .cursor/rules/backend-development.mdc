@@ -6,6 +6,8 @@ alwaysApply: false
 
 # Backend Development
 
+See **php-laravel-standards** for day-to-day Laravel code style and conventions.
+
 ## 🗄️ **Laravel Backend Standards**
 - Implement proper data validation and sanitization
 - Use secure authentication and authorization
@@ -62,6 +64,11 @@ alwaysApply: false
 - Implement proper data relationships
 - Use database transactions for data integrity
 - Implement proper data validation rules
+
+## 🚀 **Production & Operations**
+- **Config / Route Cache**: Use `php artisan config:cache` and `route:cache` in production; clear after config or route changes
+- **Queues**: Configure failed job handling and retries; set appropriate timeout and memory for `queue:work`
+- **Dependency Audits**: Run `composer audit` and `npm audit` before release (see security-first-approach)
 
 ## 📋 **Backend Checklist**
 - ✅ **Input validation** implemented with Form Requests

@@ -14,13 +14,14 @@ alwaysApply: false
 - Use consistent code formatting and indentation
 - Follow SOLID principles and design patterns where appropriate
 - Implement proper separation of concerns
-- Use type hints and return types in PHP 7.4+
+- Use type hints and return types; target PHP 8.x (use `readonly` properties and enums where appropriate)
 - Follow Laravel conventions when working with Laravel projects
 
 ## 🏗️ **Laravel-Specific Guidelines**
-- **Models**: Use Eloquent models with proper relationships and accessors/mutators
+- **Models**: Use Eloquent models with proper relationships and accessors/mutators; **always** define `$fillable` or `$guarded` to prevent mass-assignment vulnerabilities; prefer explicit attribute assignment from validated Form Request data
 - **Controllers**: Keep controllers thin, delegate business logic to services
-- **Requests**: Use Form Request classes for validation
+- **Requests**: Use Form Request classes for all HTTP validation; use `unique` rules with ignore for updates; avoid raw `Validator::make()` in controllers for user input
+- **Route Model Binding**: Use implicit route model binding; in multi-tenant apps scope binding so users cannot access other tenants' models
 - **Resources**: Use API Resources for consistent JSON responses
 - **Policies**: Implement authorization policies for user permissions
 - **Events & Listeners**: Use events for decoupled functionality
@@ -28,12 +29,13 @@ alwaysApply: false
 - **Middleware**: Implement custom middleware for cross-cutting concerns
 
 ## 🔧 **PHP Best Practices**
-- **Type Declarations**: Use strict typing and return type declarations
+- **Type Declarations**: Use strict typing (`declare(strict_types=1);`) and return type declarations
 - **Error Handling**: Implement proper exception handling with custom exceptions
 - **Code Organization**: Use namespaces and autoloading properly
 - **Dependency Injection**: Use constructor injection for dependencies
-- **Immutability**: Prefer immutable objects where possible
+- **Immutability**: Prefer immutable objects and `readonly` properties where appropriate (PHP 8.2+)
 - **Documentation**: Use PHPDoc comments for all public methods
+- **N+1 Prevention**: Use `with()` / `load()` for relationships; avoid N+1 queries in loops (see performance-optimization rule)
 
 ## 🧪 **Laravel Testing Standards**
 - **Feature Tests**: Test complete user workflows and API endpoints
@@ -46,6 +48,9 @@ alwaysApply: false
 ## 📋 **Code Quality Checklist**
 - ✅ **PSR-12 compliance** verified
 - ✅ **Type hints** added to all methods
+- ✅ **$fillable / $guarded** defined on models; no unsafe mass assignment
+- ✅ **Form Request** used for validation; no raw Validator in controllers for user input
+- ✅ **Route model binding** scoped for multi-tenant where applicable
 - ✅ **Error handling** implemented
 - ✅ **Laravel conventions** followed
 - ✅ **SOLID principles** applied
