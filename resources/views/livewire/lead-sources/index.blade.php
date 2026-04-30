@@ -12,6 +12,22 @@
         </div>
     @endif
     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+        @if($leadSources->isEmpty())
+            <x-empty-state
+                title="Add your first lead source"
+                description="Lead sources tell the platform how to discover new prospects automatically — by web search query, sitemap, or manual import. We'll deduplicate against your existing accounts and let you approve candidates before they enter your pipeline."
+                :primary-href="route('lead-sources.create')"
+                primary-label="Create lead source"
+                :secondary-href="route('accounts.create')"
+                secondary-label="Add an account manually"
+            >
+                <x-slot:icon>
+                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                    </svg>
+                </x-slot:icon>
+            </x-empty-state>
+        @else
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
@@ -33,7 +49,7 @@
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
-                    @forelse($leadSources as $source)
+                    @foreach($leadSources as $source)
                         <tr wire:key="lead-source-{{ $source->id }}">
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <input type="checkbox" wire:model.live="selected" value="{{ $source->id }}" class="rounded border-gray-300" aria-label="Select {{ $source->name }}">
@@ -79,28 +95,23 @@
                                 @if($runStatus === 'queued' || $runStatus === 'running')
                                     <span class="text-gray-400 cursor-not-allowed">Run now</span>
                                 @else
-                                    <button wire:click="runNow({{ $source->id }})" class="text-blue-600 hover:text-blue-900">
+                                    <button wire:click="runNow({{ $source->id }})" class="text-primary-600 hover:text-primary-900">
                                         Run now
                                     </button>
                                 @endif
-                                <a href="{{ route('lead-sources.edit', $source) }}" class="text-blue-600 hover:text-blue-900" wire:navigate>Edit</a>
+                                <a href="{{ route('lead-sources.edit', $source) }}" class="text-primary-600 hover:text-primary-900" wire:navigate>Edit</a>
                                 @if($source->latestRun)
-                                    <a href="{{ route('lead-source-runs.candidates', $source->latestRun) }}" class="text-blue-600 hover:text-blue-900" wire:navigate>View candidates</a>
+                                    <a href="{{ route('lead-source-runs.candidates', $source->latestRun) }}" class="text-primary-600 hover:text-primary-900" wire:navigate>View candidates</a>
                                 @endif
                                 <button wire:click="delete({{ $source->id }})" wire:confirm="Are you sure you want to delete this lead source?" class="text-red-600 hover:text-red-900">
                                     Delete
                                 </button>
                             </td>
                         </tr>
-                    @empty
-                        <tr>
-                            <td colspan="7" class="px-6 py-4 text-center text-gray-500">
-                                No lead sources. <a href="{{ route('lead-sources.create') }}" class="text-blue-600 hover:underline" wire:navigate>Create your first lead source</a>
-                            </td>
-                        </tr>
-                    @endforelse
+                    @endforeach
                 </tbody>
             </table>
         </div>
+        @endif
     </div>
 </div>

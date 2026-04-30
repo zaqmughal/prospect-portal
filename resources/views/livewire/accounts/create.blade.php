@@ -21,7 +21,7 @@
 
             <div>
                 <x-input-label for="size_band" :value="__('Company Size')" />
-                <select wire:model="size_band" id="size_band" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                <select wire:model="size_band" id="size_band" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500">
                     <option value="">Select size...</option>
                     <option value="1-10">1-10 employees</option>
                     <option value="11-50">11-50 employees</option>
@@ -41,7 +41,7 @@
 
         <div>
             <x-input-label for="notes" :value="__('Notes')" />
-            <textarea wire:model="notes" id="notes" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="Any additional notes..."></textarea>
+            <textarea wire:model="notes" id="notes" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500" placeholder="Any additional notes..."></textarea>
             <x-input-error :messages="$errors->get('notes')" class="mt-2" />
         </div>
 

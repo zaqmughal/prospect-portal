@@ -12,6 +12,15 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <x-page-intro id="lead-source-runs.candidates" title="Review discovered candidates">
+                <p>
+                    Each row is a domain the lead source uncovered. Use the <strong>ICP fit</strong> badge as a quick filter — high-fit candidates closely match your ICP sectors and signals — then approve the ones you want to research. Approved candidates become accounts in your pipeline; rejected ones won't be re-surfaced by future runs of this source.
+                </p>
+                <p class="mt-2">
+                    <strong>Tip:</strong> Use <em>Approve all high ICP fit</em> to fast-track the strongest matches in one click.
+                </p>
+            </x-page-intro>
+
             <livewire:lead-source-runs.candidates :run="$run" />
         </div>
     </div>

@@ -1,6 +1,6 @@
 <div>
     <div class="mb-4 flex flex-wrap gap-4 items-center">
-        <select wire:model.live="statusFilter" class="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+        <select wire:model.live="statusFilter" class="rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500">
             <option value="">All statuses</option>
             @foreach($statuses as $s)
                 <option value="{{ $s->value }}">{{ $s->label() }}</option>
@@ -18,7 +18,14 @@
                     Score selected against ICP
                 @endif
             </button>
-            <button wire:click="promoteApproved" wire:loading.attr="disabled" class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed">
+            <button wire:click="approveAllHighIcpFit" wire:loading.attr="disabled" class="inline-flex items-center px-4 py-2 bg-emerald-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                @if($highIcpFitNewCount === 0) disabled @endif>
+                Approve all high ICP fit
+                @if($highIcpFitNewCount > 0)
+                    ({{ $highIcpFitNewCount }})
+                @endif
+            </button>
+            <button wire:click="promoteApproved" wire:loading.attr="disabled" class="inline-flex items-center px-4 py-2 bg-primary-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed">
                 Promote approved to accounts
             </button>
         @endif
@@ -94,7 +101,7 @@
                             </td>
                             <td class="px-6 py-4 text-sm text-gray-500">{{ $candidate->reason ?? '—' }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm space-x-2">
-                                <button type="button" wire:click="showDetails({{ $candidate->id }})" class="text-blue-600 hover:text-blue-900">
+                                <button type="button" wire:click="showDetails({{ $candidate->id }})" class="text-primary-600 hover:text-primary-900">
                                     Details
                                 </button>
                                 @if(config('discovery.approve_before_import') && $candidate->status->value === 'new')
@@ -129,7 +136,7 @@
                         <div>
                             <span class="font-medium text-gray-700 dark:text-gray-300">URL</span>
                             <p class="mt-1">
-                                <a href="{{ $detailsCandidate->url }}" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-900 break-all">{{ $detailsCandidate->url }}</a>
+                                <a href="{{ $detailsCandidate->url }}" target="_blank" rel="noopener noreferrer" class="text-primary-600 hover:text-primary-900 break-all">{{ $detailsCandidate->url }}</a>
                             </p>
                         </div>
                         <div>
@@ -174,7 +181,7 @@
                                     @if($scoringCandidateId === $detailsCandidate->id)
                                         <span class="text-gray-500">Scoring…</span>
                                     @else
-                                        <button type="button" wire:click="scoreCandidateForIcp({{ $detailsCandidate->id }})" class="inline-flex items-center px-3 py-1.5 bg-blue-600 border border-transparent rounded-md font-medium text-xs text-white hover:bg-blue-700">
+                                        <button type="button" wire:click="scoreCandidateForIcp({{ $detailsCandidate->id }})" class="inline-flex items-center px-3 py-1.5 bg-primary-600 border border-transparent rounded-md font-medium text-xs text-white hover:bg-primary-700">
                                             Score against ICP
                                         </button>
                                     @endif

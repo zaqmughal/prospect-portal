@@ -5,7 +5,7 @@
             <div>
                 <h1 class="text-2xl font-bold text-gray-900">{{ $account->name }}</h1>
                 <p class="text-gray-500">
-                    <a href="{{ $account->url }}" target="_blank" class="text-blue-600 hover:underline">{{ $account->domain }}</a>
+                    <a href="{{ $account->url }}" target="_blank" class="text-primary-600 hover:underline">{{ $account->domain }}</a>
                 </p>
                 <div class="mt-2 flex flex-wrap gap-2">
                     @if($account->sector)
@@ -33,7 +33,7 @@
                     <div class="text-xs text-gray-500">Lead Score</div>
                 </div>
                 <div>
-                    <select wire:change="updatePipelineStage($event.target.value)" class="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                    <select wire:change="updatePipelineStage($event.target.value)" class="rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500">
                         @foreach($pipelineStages as $stage)
                             <option value="{{ $stage->value }}" {{ $account->pipeline_stage === $stage ? 'selected' : '' }}>
                                 {{ $stage->label() }}
@@ -68,7 +68,7 @@
             <nav class="-mb-px flex" aria-label="Tabs">
                 @foreach(['overview' => 'Overview', 'signals' => 'Signals', 'brief' => 'Brief', 'outreach' => 'Outreach', 'history' => 'History'] as $tab => $label)
                     <button wire:click="setTab('{{ $tab }}')"
-                        class="py-4 px-6 text-sm font-medium border-b-2 {{ $activeTab === $tab ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
+                        class="py-4 px-6 text-sm font-medium border-b-2 {{ $activeTab === $tab ? 'border-primary-500 text-primary-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
                         {{ $label }}
                     </button>
                 @endforeach
@@ -80,17 +80,33 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <h3 class="text-lg font-medium text-gray-900 mb-2">Score Breakdown</h3>
-                        <p class="text-sm text-gray-500 mb-4">Lead score is out of 100. It combines how well the account fits your ICP, how strong the detected signals are, and how ready the account is for outreach.</p>
+                        <p class="text-sm text-gray-500 mb-4">Lead score is out of 85 (ICP fit 25 + signals 40 + reachability 20). It combines how well the account fits your ICP, how strong the detected signals are, and how ready the account is for outreach.</p>
                         @if($account->score_breakdown)
                             <dl class="space-y-4">
                                 @foreach($account->score_breakdown as $category => $data)
+                                    @php
+                                        $modalId = 'score-' . $category;
+                                    @endphp
                                     <div>
-                                        <div class="flex justify-between items-baseline">
-                                            <dt class="text-gray-900 font-medium">{{ ucwords(str_replace('_', ' ', $category)) }}</dt>
-                                            <dd class="font-semibold text-gray-700">{{ $data['score'] ?? 0 }} / {{ $data['max'] ?? 0 }}</dd>
+                                        <div class="flex justify-between items-baseline gap-2">
+                                            <dt class="text-gray-900 font-medium flex items-center gap-1.5">
+                                                {{ ucwords(str_replace('_', ' ', $category)) }}
+                                                <button
+                                                    type="button"
+                                                    class="inline-flex items-center justify-center w-5 h-5 rounded-full text-gray-400 hover:text-primary-600 hover:bg-primary-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1"
+                                                    aria-label="Why is {{ ucwords(str_replace('_', ' ', $category)) }} this score?"
+                                                    x-data
+                                                    x-on:click="$dispatch('open-modal', '{{ $modalId }}')"
+                                                >
+                                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                                                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                                                    </svg>
+                                                </button>
+                                            </dt>
+                                            <dd class="font-semibold text-gray-700 shrink-0">{{ $data['score'] ?? 0 }} / {{ $data['max'] ?? 0 }}</dd>
                                         </div>
                                         @if($category === 'icp_fit')
-                                            <p class="text-sm text-gray-500 mt-0.5">How well this account matches your default ICP: sector, size band, and location (UK gets a small bonus). Based on data extracted from the website during research.</p>
+                                            <p class="text-sm text-gray-500 mt-0.5">How well this account matches your default ICP: sector and location (UK gets a small bonus). Based on data extracted from the website during research.</p>
                                         @elseif($category === 'signal_strength')
                                             <p class="text-sm text-gray-500 mt-0.5">Strength of detected signals (content, UX, tech, or opportunity issues). High-severity signals score more than medium or low. More relevant signals mean a stronger fit for outreach.</p>
                                         @elseif($category === 'reachability')
@@ -99,6 +115,68 @@
                                     </div>
                                 @endforeach
                             </dl>
+
+                            {{-- Score breakdown explanation modals --}}
+                            @foreach($account->score_breakdown as $category => $data)
+                                @php $modalId = 'score-' . $category; @endphp
+                                <x-modal name="{{ $modalId }}" :show="false" maxWidth="lg">
+                                    <div class="p-6">
+                                        <h3 class="text-lg font-semibold text-gray-900 mb-2">
+                                            Why is {{ ucwords(str_replace('_', ' ', $category)) }} {{ $data['score'] ?? 0 }}/{{ $data['max'] ?? 0 }}?
+                                        </h3>
+                                        @if($category === 'icp_fit')
+                                            <p class="text-sm text-gray-600 mb-4">ICP Fit (max 25) is based on how well this account matches your default ICP: sector (up to 20) and location (up to 5; UK gets full points).</p>
+                                            @if(!empty($data['factors']))
+                                                <ul class="list-disc list-inside space-y-1 text-sm text-gray-700">
+                                                    @if(isset($data['factors']['sector']))
+                                                        <li><strong>Sector:</strong> {{ $data['factors']['sector'] ?? 'Not set' }} — {{ !empty($data['factors']['sector_match']) ? 'Matches your ICP (+20)' : 'Does not match your ICP (+5 if set)' }}</li>
+                                                    @endif
+                                                    @if(array_key_exists('location', $data['factors'] ?? []))
+                                                        @php
+                                                            $loc = $data['factors']['location'] ?? null;
+                                                            $locStr = $loc !== null ? (string) $loc : '';
+                                                            $isUk = $locStr !== '' && (str_contains(strtolower($locStr), 'uk') || str_contains(strtolower($locStr), 'united kingdom') || str_contains(strtolower($locStr), 'london') || str_contains(strtolower($locStr), 'england'));
+                                                        @endphp
+                                                        <li><strong>Location:</strong> {{ $loc ?? 'Not set' }} — {{ $loc === null ? 'Not set (0)' : ($isUk ? 'UK location (+5)' : 'Non-UK (+2)') }}</li>
+                                                    @endif
+                                                </ul>
+                                            @endif
+                                        @elseif($category === 'signal_strength')
+                                            <p class="text-sm text-gray-600 mb-4">Signal Strength (max 40) comes from detected signals. High severity ≈ 12 pts each, medium ≈ 8, low ≈ 4. The total is capped at 40.</p>
+                                            @if(!empty($data['signals']))
+                                                <ul class="space-y-2 text-sm">
+                                                    @foreach($data['signals'] as $sig)
+                                                        @php
+                                                            $sev = \App\Enums\SignalSeverity::tryFrom($sig['severity'] ?? '');
+                                                            $badgeClass = $sev ? match($sev) { \App\Enums\SignalSeverity::High => 'bg-red-100 text-red-800', \App\Enums\SignalSeverity::Medium => 'bg-yellow-100 text-yellow-800', \App\Enums\SignalSeverity::Low => 'bg-blue-100 text-blue-800', default => 'bg-gray-100 text-gray-800' } : 'bg-gray-100 text-gray-800';
+                                                        @endphp
+                                                        <li class="flex justify-between items-start gap-2">
+                                                            <span class="text-gray-700">{{ $sig['title'] ?? 'Signal' }}</span>
+                                                            <span class="shrink-0 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium {{ $badgeClass }}">+{{ $sig['impact'] ?? 0 }} pts</span>
+                                                        </li>
+                                                    @endforeach
+                                                </ul>
+                                            @else
+                                                <p class="text-sm text-gray-500">No signals detected yet for this account. Run research to detect signals.</p>
+                                            @endif
+                                        @elseif($category === 'reachability')
+                                            <p class="text-sm text-gray-600 mb-4">Reachability (max 20) measures how ready the account is for outreach: website (5), research completed (10), and brief generated (5).</p>
+                                            @if(!empty($data['factors']))
+                                                <ul class="list-disc list-inside space-y-1 text-sm text-gray-700">
+                                                    <li><strong>Has website:</strong> {{ !empty($data['factors']['has_url']) ? 'Yes (+5)' : 'No (0)' }}</li>
+                                                    <li><strong>Research completed:</strong> {{ !empty($data['factors']['research_complete']) ? 'Yes (+10)' : 'No (0)' }}</li>
+                                                    <li><strong>Brief generated:</strong> {{ !empty($data['factors']['has_brief']) ? 'Yes (+5)' : 'No (0)' }}</li>
+                                                </ul>
+                                            @endif
+                                        @endif
+                                        <div class="mt-6 flex justify-end">
+                                            <button type="button" class="inline-flex items-center px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2" x-on:click="$dispatch('close-modal', '{{ $modalId }}')">
+                                                Close
+                                            </button>
+                                        </div>
+                                    </div>
+                                </x-modal>
+                            @endforeach
                         @else
                             <p class="text-gray-500">Run research to generate score breakdown</p>
                         @endif
@@ -157,7 +235,7 @@
                             </div>
                             <pre class="whitespace-pre-wrap text-sm text-gray-800 bg-gray-50 p-3 rounded">{{ $asset->content }}</pre>
                             <div class="mt-2 flex gap-2">
-                                <button onclick="navigator.clipboard.writeText('{{ addslashes($asset->content) }}'); alert('Copied!')" class="text-sm text-blue-600 hover:text-blue-800">
+                                <button onclick="navigator.clipboard.writeText('{{ addslashes($asset->content) }}'); alert('Copied!')" class="text-sm text-primary-600 hover:text-primary-800">
                                     Copy to Clipboard
                                 </button>
                             </div>

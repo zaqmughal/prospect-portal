@@ -16,7 +16,7 @@
                     @endif
                 </div>
             @endforeach
-            <button type="button" wire:click="addQuery" class="mt-2 text-sm text-blue-600 hover:text-blue-900">Add query</button>
+            <button type="button" wire:click="addQuery" class="mt-2 text-sm text-primary-600 hover:text-primary-900">Add query</button>
             <x-input-error :messages="$errors->get('queries')" class="mt-2" />
         </div>
 
@@ -28,7 +28,7 @@
 
         <div>
             <x-input-label for="cadence" value="Cadence" />
-            <select id="cadence" wire:model="cadence" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+            <select id="cadence" wire:model="cadence" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500">
                 @foreach($cadences as $c)
                     <option value="{{ $c->value }}">{{ $c->label() }}</option>
                 @endforeach
@@ -37,7 +37,7 @@
 
         <div>
             <x-input-label for="status" value="Status" />
-            <select id="status" wire:model="status" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+            <select id="status" wire:model="status" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500">
                 @foreach($statuses as $s)
                     <option value="{{ $s->value }}">{{ $s->label() }}</option>
                 @endforeach

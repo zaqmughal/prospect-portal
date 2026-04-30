@@ -42,7 +42,7 @@
                     <span class="text-sm text-gray-500">${{ number_format($todaySpend, 2) }} / ${{ number_format($dailyLimit, 2) }}</span>
                 </div>
                 <div class="w-full bg-gray-200 rounded-full h-2.5">
-                    <div class="bg-blue-600 h-2.5 rounded-full" style="width: {{ min(100, ($todaySpend / $dailyLimit) * 100) }}%"></div>
+                    <div class="bg-primary-600 h-2.5 rounded-full" style="width: {{ min(100, ($todaySpend / $dailyLimit) * 100) }}%"></div>
                 </div>
                 <p class="mt-2 text-sm text-gray-600">
                     Remaining: ${{ number_format($remainingBudget, 2) }}
@@ -53,13 +53,10 @@
             <div class="border rounded-lg p-4">
                 <div class="flex justify-between items-center mb-2">
                     <span class="text-sm font-medium text-gray-500">Research Runs Today</span>
-                    <span class="text-sm text-gray-500">{{ $researchToday }} / {{ $researchLimit }}</span>
+                    <span class="text-sm text-gray-500">{{ $researchToday }}</span>
                 </div>
-                <div class="w-full bg-gray-200 rounded-full h-2.5">
-                    <div class="bg-green-600 h-2.5 rounded-full" style="width: {{ min(100, ($researchToday / $researchLimit) * 100) }}%"></div>
-                </div>
-                <p class="mt-2 text-sm text-gray-600">
-                    Remaining: {{ $researchLimit - $researchToday }} runs
+                <p class="mt-1 text-sm text-gray-600">
+                    No daily limit; count is for reference only.
                 </p>
             </div>
         </div>

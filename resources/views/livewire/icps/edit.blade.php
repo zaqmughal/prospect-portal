@@ -8,7 +8,7 @@
 
         <div>
             <x-input-label for="description" :value="__('Description')" />
-            <textarea wire:model="description" id="description" rows="2" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"></textarea>
+            <textarea wire:model="description" id="description" rows="2" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"></textarea>
             <x-input-error :messages="$errors->get('description')" class="mt-2" />
         </div>
 
@@ -18,14 +18,8 @@
             <x-input-error :messages="$errors->get('sectors')" class="mt-2" />
         </div>
 
-        <div>
-            <x-input-label for="size_bands" :value="__('Target Size Bands (comma-separated)')" />
-            <x-text-input wire:model="size_bands" id="size_bands" type="text" class="mt-1 block w-full" />
-            <x-input-error :messages="$errors->get('size_bands')" class="mt-2" />
-        </div>
-
         <div class="flex items-center">
-            <input wire:model="is_default" id="is_default" type="checkbox" class="rounded border-gray-300 text-blue-600 shadow-sm focus:ring-blue-500">
+            <input wire:model="is_default" id="is_default" type="checkbox" class="rounded border-gray-300 text-primary-600 shadow-sm focus:ring-primary-500">
             <label for="is_default" class="ml-2 block text-sm text-gray-900">Set as default ICP</label>
         </div>
 
