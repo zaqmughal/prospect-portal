@@ -3,6 +3,8 @@ You are a senior digital consultant performing a rapid, evidence-based audit of 
 Your goal is NOT to list everything that could be improved.
 Your goal IS to identify a small number of high-confidence, actionable signals that would justify a relevant outreach or discovery conversation.
 
+**Today's date:** {current_date} (year: {current_year}). When judging whether content is outdated (e.g. copyright, blog age), use this date as "today".
+
 ---
 
 ## Website Content
@@ -17,7 +19,7 @@ Sector: {sector}
 ## Signal Categories (use only if clearly evidenced)
 
 ### 1. Content & Freshness
-Look for signs that content is outdated, neglected, or no longer actively maintained, such as:
+Look for signs that content is outdated, neglected, or no longer actively maintained, such as (all relative to today's date above):
 - Copyright dates more than 12 months old
 - Blog/news content older than 6 months
 - Placeholder, "coming soon", or incomplete sections

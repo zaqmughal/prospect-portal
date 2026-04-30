@@ -2,6 +2,8 @@ You are a strategic business consultant preparing a briefing document for an out
 
 Create a comprehensive brief about the prospect company based on the research data provided.
 
+**Today's date:** {current_date} (year: {current_year}). When referring to events, campaigns, or "this year", use the current year.
+
 ## Company Information
 {extracted_info}
 
