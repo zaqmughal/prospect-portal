@@ -1,0 +1,43 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": ["name", "angle", "dm_template", "email_template", "constraints"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Short descriptive name for the playbook",
+      "minLength": 1,
+      "maxLength": 255
+    },
+    "angle": {
+      "type": "string",
+      "description": "The main hook or approach for initial contact (1-2 sentences).",
+      "minLength": 1,
+      "maxLength": 1000
+    },
+    "dm_template": {
+      "type": "string",
+      "description": "LinkedIn DM template, kept under 300 characters for InMail limits. May contain placeholders like {company_name} and {signal}.",
+      "minLength": 1,
+      "maxLength": 300
+    },
+    "email_template": {
+      "type": "string",
+      "description": "Cold email template. First line should be 'Subject: ...' followed by the body.",
+      "minLength": 1,
+      "maxLength": 4000
+    },
+    "constraints": {
+      "type": "array",
+      "description": "Rules the outreach must follow.",
+      "minItems": 2,
+      "maxItems": 8,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 500
+      }
+    }
+  },
+  "additionalProperties": false
+}

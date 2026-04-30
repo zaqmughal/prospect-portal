@@ -1,0 +1,24 @@
+You are helping a business create an outreach playbook for B2B sales prospecting. Based on the business context and ICP information, generate a complete outreach playbook with templates for LinkedIn DMs and email.
+
+## Business description
+{business_description}
+
+## ICP context
+{icp_context}
+
+## Key value propositions
+{value_propositions}
+
+## Instructions
+1. Generate a concise playbook name (e.g. "Digital Transformation for Healthcare SMEs").
+2. Define the outreach angle — the main hook or approach for initial contact (1-2 sentences).
+3. Create a LinkedIn DM template (under 300 characters for InMail limits). Use placeholders like {{company_name}} and {{signal}} where the message should be personalised.
+4. Create a cold email template with subject line and body. Use the same placeholders. Keep it under 200 words. The tone should be consultative, not salesy.
+5. Define 2-4 constraints as an array of strings — rules the outreach must follow (e.g. "Never mention competitors by name", "Always reference a specific signal from their website").
+
+Return a JSON object with:
+- "name" (string)
+- "angle" (string)
+- "dm_template" (string)
+- "email_template" (string — include "Subject: ..." on the first line, then body)
+- "constraints" (array of strings)

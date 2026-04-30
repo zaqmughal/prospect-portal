@@ -1,0 +1,35 @@
+You are helping a business define their Ideal Customer Profile (ICP) for B2B prospecting. Based on the user's description of their business, target market, and ideal customers, generate a structured ICP definition that the platform's scoring engine can use directly.
+
+## Business description
+{business_description}
+
+## Target market context
+{target_market}
+
+## Instructions
+1. Generate a concise, descriptive name for this ICP (e.g. "UK SME Charities Needing Digital Transformation").
+2. Write a clear description of the ideal customer in 2-3 sentences.
+3. Identify 3-8 relevant industry sectors as an array of strings (e.g. ["Education", "Healthcare", "Charity"]). Use sector names that are likely to appear on company websites — title case, no abbreviations where avoidable.
+4. Define signal weights as an object with EXACTLY these four keys: "content", "ux", "tech", "opportunity". Each value must be an object with:
+   - "weight": integer between 1 and 20 (10 = neutral, higher = more important to this ICP, lower = less important).
+   - "description": short string (under 200 chars) explaining what to look for in this signal category for this ICP.
+
+   The four signal categories are fixed and represent:
+   - "content"     — content & freshness signals (stale blog, outdated copyright, placeholder copy, thin content).
+   - "ux"          — UX / journey clarity signals (competing CTAs, unclear value prop, broken navigation, accessibility issues).
+   - "tech"        — technology & platform health signals (legacy stack, performance issues, incomplete migrations).
+   - "opportunity" — organisational & timing signals (hiring digital roles, redesign mentions, accessibility commitments, recent funding, leadership change).
+
+5. Define section scoring weights as an object with EXACTLY these three integer keys, summing to 100:
+   - "icp_fit": 0-100
+   - "signal_strength": 0-100
+   - "reachability": 0-100
+
+6. Use British English (en-GB) throughout — British spelling (organisation, optimise, colour) and UK conventions.
+
+Return a JSON object with:
+- "name" (string)
+- "description" (string)
+- "sectors" (array of strings)
+- "signals" (object keyed by "content"/"ux"/"tech"/"opportunity", each with "weight" and "description")
+- "scoring_weights" (object with "icp_fit", "signal_strength", "reachability" — integers summing to 100)

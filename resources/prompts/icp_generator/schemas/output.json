@@ -1,0 +1,65 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": ["name", "description", "sectors", "signals", "scoring_weights"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Short descriptive name for the ICP.",
+      "minLength": 1,
+      "maxLength": 255
+    },
+    "description": {
+      "type": "string",
+      "description": "Clear description of the ideal customer (2-3 sentences).",
+      "minLength": 1,
+      "maxLength": 2000
+    },
+    "sectors": {
+      "type": "array",
+      "description": "Relevant industry sectors.",
+      "minItems": 3,
+      "maxItems": 8,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 100
+      }
+    },
+    "signals": {
+      "type": "object",
+      "description": "Signal weights keyed by category. Must contain all four categories.",
+      "required": ["content", "ux", "tech", "opportunity"],
+      "properties": {
+        "content": { "$ref": "#/definitions/signalEntry" },
+        "ux": { "$ref": "#/definitions/signalEntry" },
+        "tech": { "$ref": "#/definitions/signalEntry" },
+        "opportunity": { "$ref": "#/definitions/signalEntry" }
+      },
+      "additionalProperties": false
+    },
+    "scoring_weights": {
+      "type": "object",
+      "description": "Section scoring weights. Integers summing to 100.",
+      "required": ["icp_fit", "signal_strength", "reachability"],
+      "properties": {
+        "icp_fit": { "type": "integer", "minimum": 0, "maximum": 100 },
+        "signal_strength": { "type": "integer", "minimum": 0, "maximum": 100 },
+        "reachability": { "type": "integer", "minimum": 0, "maximum": 100 }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "definitions": {
+    "signalEntry": {
+      "type": "object",
+      "required": ["weight", "description"],
+      "properties": {
+        "weight": { "type": "integer", "minimum": 1, "maximum": 20 },
+        "description": { "type": "string", "minLength": 1, "maxLength": 200 }
+      },
+      "additionalProperties": false
+    }
+  }
+}
