@@ -3,10 +3,15 @@
 namespace App\Providers;
 
 use App\Contracts\DiscoveryConnector;
+use App\Listeners\SyncOrganizationPlanFromStripe;
+use App\Models\Organization;
 use App\Services\Discovery\BingSearchConnector;
 use App\Services\Discovery\DomainNormaliser;
 use App\Services\Discovery\SerpApiSearchConnector;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Cashier\Cashier;
+use Laravel\Cashier\Events\WebhookReceived;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -30,6 +35,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Cashier::useCustomerModel(Organization::class);
+
+        Event::listen(WebhookReceived::class, SyncOrganizationPlanFromStripe::class);
     }
 }

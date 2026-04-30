@@ -8,6 +8,7 @@ use App\Enums\ValidationStatus;
 use App\Models\Account;
 use App\Models\AiRun;
 use App\Models\ResearchRun;
+use App\Services\PlanLimitService;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use OpenAI;
@@ -15,6 +16,9 @@ use OpenAI\Client;
 
 class OpenAIService
 {
+    /** System instruction for all AI runs: language and output format. */
+    private const SYSTEM_INSTRUCTION = 'You are a helpful assistant. Always respond with valid JSON. Use British English (en-GB) for all text: British spelling (e.g. colour, organisation, optimise, analyse) and UK conventions.';
+
     private const RUN_TYPE_MODELS = [
         'extractor' => 'fast',
         'signal_detector' => 'fast',
@@ -22,6 +26,8 @@ class OpenAIService
         'outreach_writer' => 'quality',
         'lead_source_generator' => 'fast',
         'candidate_icp_fit' => 'fast',
+        'icp_generator' => 'quality',
+        'playbook_generator' => 'quality',
     ];
 
     private const COST_PER_1K_TOKENS = [
@@ -80,7 +86,7 @@ class OpenAIService
             $response = $this->client->chat()->create([
                 'model' => $model,
                 'messages' => [
-                    ['role' => 'system', 'content' => 'You are a helpful assistant. Always respond with valid JSON.'],
+                    ['role' => 'system', 'content' => self::SYSTEM_INSTRUCTION],
                     ['role' => 'user', 'content' => $prompt],
                 ],
                 'response_format' => ['type' => 'json_object'],
@@ -126,11 +132,16 @@ class OpenAIService
                 'cost_estimate' => $this->calculateCost($model, $response->usage->promptTokens ?? 0, $response->usage->completionTokens ?? 0),
             ]);
 
-            // Update research run cost
             $researchRun->addCost((float) $aiRun->cost_estimate);
 
-            // Track daily spend
             $this->trackDailySpend((float) $aiRun->cost_estimate);
+
+            if ($account->organization) {
+                app(PlanLimitService::class)->trackOrgDailySpend(
+                    $account->organization,
+                    (float) $aiRun->cost_estimate
+                );
+            }
 
             return [
                 'success' => $validation['valid'],
@@ -199,7 +210,7 @@ class OpenAIService
             $response = $this->client->chat()->create([
                 'model' => $model,
                 'messages' => [
-                    ['role' => 'system', 'content' => 'You are a helpful assistant. Always respond with valid JSON.'],
+                    ['role' => 'system', 'content' => self::SYSTEM_INSTRUCTION],
                     ['role' => 'user', 'content' => $prompt],
                 ],
                 'response_format' => ['type' => 'json_object'],
