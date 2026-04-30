@@ -21,13 +21,13 @@ use App\Services\AI\OpenAIService;
 use App\Services\AI\OutputValidator;
 use App\Services\Crawler\PoliteCrawler;
 use App\Services\Crawler\SnapshotStorage;
+use App\Services\PlanLimitService;
 use App\Services\ScoringService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
 class RunAccountResearch implements ShouldQueue
@@ -53,10 +53,10 @@ class RunAccountResearch implements ShouldQueue
         SnapshotStorage $storage,
         OpenAIService $ai,
         OutputValidator $validator,
-        ScoringService $scoring
+        ScoringService $scoring,
+        PlanLimitService $planLimits
     ): void {
-        // Check daily limits
-        if (! $this->checkDailyLimits($ai)) {
+        if (! $this->checkDailyLimits($ai, $planLimits)) {
             return;
         }
 
@@ -82,7 +82,7 @@ class RunAccountResearch implements ShouldQueue
 
                 throw new \RuntimeException(
                     $firstError
-                        ? 'No pages could be fetched. First error: ' . $firstError
+                        ? 'No pages could be fetched. First error: '.$firstError
                         : 'No pages could be fetched'
                 );
             }
@@ -113,15 +113,15 @@ class RunAccountResearch implements ShouldQueue
             // Step 5: Generate outreach
             $this->runOutreachWriter($ai, $run, $brief ?? []);
 
-            // Step 6: Update score
-            $scoring->updateScore($this->account);
-
-            // Mark complete
+            // Mark complete before scoring so reachability factors see status=completed
             $run->markAsCompleted();
             $this->account->update([
                 'research_status' => ResearchStatus::Completed,
                 'last_researched_at' => now(),
             ]);
+
+            // Step 6: Update score (after run is completed so research_complete is true in breakdown)
+            $scoring->updateScore($this->account);
 
             Log::info('Research completed', [
                 'account_id' => $this->account->id,
@@ -144,35 +144,39 @@ class RunAccountResearch implements ShouldQueue
         }
     }
 
-    private function checkDailyLimits(OpenAIService $ai): bool
+    private function checkDailyLimits(OpenAIService $ai, PlanLimitService $planLimits): bool
     {
-        // Check AI budget
+        $organization = $this->account->organization;
+
+        if ($organization && ! $planLimits->canRunResearch($organization)) {
+            $this->account->update([
+                'research_status' => ResearchStatus::QueuedBlocked,
+                'research_blocked_reason' => 'Monthly research run limit reached for your plan',
+            ]);
+            Log::warning('Research blocked by plan limit', ['account_id' => $this->account->id, 'org_id' => $organization->id]);
+
+            return false;
+        }
+
+        if ($organization && ! $planLimits->isOrgWithinBudget($organization)) {
+            $this->account->update([
+                'research_status' => ResearchStatus::QueuedBlocked,
+                'research_blocked_reason' => 'Daily AI budget exceeded for your organisation',
+            ]);
+            Log::warning('Research blocked by org AI budget', ['account_id' => $this->account->id, 'org_id' => $organization->id]);
+
+            return false;
+        }
+
         if (! $ai->isWithinBudget()) {
             $this->account->update([
                 'research_status' => ResearchStatus::QueuedBlocked,
-                'research_blocked_reason' => 'Daily budget exceeded',
+                'research_blocked_reason' => 'Platform daily budget exceeded',
             ]);
-            Log::warning('Research blocked by AI budget', ['account_id' => $this->account->id]);
+            Log::warning('Research blocked by platform AI budget', ['account_id' => $this->account->id]);
 
             return false;
         }
-
-        // Check daily research limit
-        $limit = (int) config('services.research.daily_limit', 50);
-        $key = 'research_count:'.date('Y-m-d');
-        $count = (int) Cache::get($key, 0);
-
-        if ($count >= $limit) {
-            $this->account->update([
-                'research_status' => ResearchStatus::QueuedBlocked,
-                'research_blocked_reason' => 'Daily limit reached',
-            ]);
-            Log::warning('Research blocked by daily limit', ['account_id' => $this->account->id]);
-
-            return false;
-        }
-
-        Cache::put($key, $count + 1, now()->endOfDay());
 
         return true;
     }
@@ -303,6 +307,8 @@ class RunAccountResearch implements ShouldQueue
                 'content' => substr($text, 0, 50000),
                 'company_name' => $extractedInfo['company_name'] ?? $this->account->name,
                 'sector' => $extractedInfo['sector'] ?? $this->account->sector ?? 'Unknown',
+                'current_date' => now()->format('j F Y'),
+                'current_year' => (string) now()->year,
             ]
         );
 
@@ -349,6 +355,8 @@ class RunAccountResearch implements ShouldQueue
             [
                 'extracted_info' => json_encode($extractedInfo) ?: '{}',
                 'signals' => json_encode($signals) ?: '[]',
+                'current_date' => now()->format('j F Y'),
+                'current_year' => (string) now()->year,
             ]
         );
 
@@ -458,6 +466,8 @@ class RunAccountResearch implements ShouldQueue
                 'company_website' => config('outreach.company_website'),
                 'linkedin_url' => config('outreach.linkedin_url'),
                 'case_study_url' => config('outreach.case_study_url'),
+                'current_date' => now()->format('j F Y'),
+                'current_year' => (string) now()->year,
             ]
         );
 

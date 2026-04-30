@@ -110,7 +110,6 @@ ddev npm run build
 | `OPENAI_MODEL_FAST` | Model for extraction/detection | `gpt-4o-mini` |
 | `OPENAI_MODEL_QUALITY` | Model for briefs/outreach | `gpt-4o` |
 | `AI_DAILY_SPEND_LIMIT` | Max daily AI spend (USD) | `5.00` |
-| `RESEARCH_DAILY_LIMIT` | Max research runs per day | `50` |
 | `CRAWL_FORCE_IPV4` | Force IPv4 for crawl/robots.txt (e.g. when IPv6 is broken in DDEV) | `false` |
 | `CRAWL_VERIFY_SSL` | Verify SSL for crawler (set false in DDEV if you see SSL certificate errors) | `true` |
 | `SERPAPI_API_KEY` | SerpAPI key (for Lead Sources discovery; Google results via SerpAPI) | Required for discovery |

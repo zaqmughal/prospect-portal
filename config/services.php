@@ -42,10 +42,6 @@ return [
         'daily_limit' => env('AI_DAILY_SPEND_LIMIT', 5.00),
     ],
 
-    'research' => [
-        'daily_limit' => env('RESEARCH_DAILY_LIMIT', 50),
-    ],
-
     'crawler' => [
         'force_ipv4' => env('CRAWL_FORCE_IPV4', false),
         'verify_ssl' => env('CRAWL_VERIFY_SSL', true),
