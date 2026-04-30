@@ -8,6 +8,7 @@
     "require": {
         "php": "^8.2",
         "justinrainbow/json-schema": "^6.6",
+        "laravel/cashier": "^16.5",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
         "livewire/livewire": "^3.6.4",
