@@ -16,8 +16,6 @@ class Create extends Component
 
     public string $sectors = '';
 
-    public string $size_bands = '';
-
     public bool $is_default = false;
 
     /**
@@ -29,7 +27,6 @@ class Create extends Component
             'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:1000'],
             'sectors' => ['nullable', 'string'],
-            'size_bands' => ['nullable', 'string'],
             'is_default' => ['boolean'],
         ];
     }
@@ -43,13 +40,11 @@ class Create extends Component
         }
 
         $sectors = $this->sectors ? array_map('trim', explode(',', $this->sectors)) : null;
-        $sizeBands = $this->size_bands ? array_map('trim', explode(',', $this->size_bands)) : null;
 
         Icp::create([
             'name' => $this->name,
             'description' => $this->description ?: null,
             'sectors' => $sectors,
-            'size_bands' => $sizeBands,
             'is_default' => $this->is_default,
         ]);
 

@@ -67,9 +67,6 @@ class Create extends Component
                 if (! empty($icp->sectors) && is_array($icp->sectors)) {
                     $parts[] = 'Sectors: '.implode(', ', $icp->sectors);
                 }
-                if (! empty($icp->size_bands) && is_array($icp->size_bands)) {
-                    $parts[] = 'Size bands: '.implode(', ', $icp->size_bands);
-                }
                 $icpContext = implode('. ', $parts);
             }
         }

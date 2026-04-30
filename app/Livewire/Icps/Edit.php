@@ -20,8 +20,6 @@ class Edit extends Component
 
     public string $sectors = '';
 
-    public string $size_bands = '';
-
     public bool $is_default = false;
 
     public function mount(int $icpId): void
@@ -32,9 +30,7 @@ class Edit extends Component
         $this->name = $icp->name;
         $this->description = $icp->description ?? '';
         $sectors = $icp->sectors;
-        $sizeBands = $icp->size_bands;
         $this->sectors = is_array($sectors) ? implode(', ', $sectors) : '';
-        $this->size_bands = is_array($sizeBands) ? implode(', ', $sizeBands) : '';
         $this->is_default = $icp->is_default;
     }
 
@@ -47,7 +43,6 @@ class Edit extends Component
             'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:1000'],
             'sectors' => ['nullable', 'string'],
-            'size_bands' => ['nullable', 'string'],
             'is_default' => ['boolean'],
         ];
     }
@@ -61,13 +56,11 @@ class Edit extends Component
         }
 
         $sectors = $this->sectors ? array_map('trim', explode(',', $this->sectors)) : null;
-        $sizeBands = $this->size_bands ? array_map('trim', explode(',', $this->size_bands)) : null;
 
         Icp::findOrFail($this->icpId)->update([
             'name' => $this->name,
             'description' => $this->description ?: null,
             'sectors' => $sectors,
-            'size_bands' => $sizeBands,
             'is_default' => $this->is_default,
         ]);
 

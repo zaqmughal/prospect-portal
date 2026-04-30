@@ -10,7 +10,7 @@ use App\Models\Icp;
 
 class ScoringService
 {
-    private const MAX_ICP_SCORE = 40;
+    private const MAX_ICP_SCORE = 25;
 
     private const MAX_SIGNAL_SCORE = 40;
 
@@ -54,30 +54,22 @@ class ScoringService
     }
 
     /**
-     * Calculate ICP fit score (0-40).
+     * Calculate ICP fit score (0-25): sector (0-20) + location (0-5).
      */
     private function calculateIcpFit(Account $account, ?Icp $icp): int
     {
         if ($icp === null) {
-            return 20; // Default middle score if no ICP
+            return 13; // Default middle score if no ICP
         }
 
         $score = 0;
 
         // Sector match (0-20)
         $sectors = $icp->sectors ?? [];
-        if (is_array($sectors) && in_array($account->sector, $sectors, true)) {
+        if (is_array($sectors) && $this->accountSectorMatchesIcpSectors($account->sector, $sectors)) {
             $score += 20;
         } elseif ($account->sector !== null) {
             $score += 5; // Some credit for having a sector
-        }
-
-        // Size band match (0-15)
-        $sizeBands = $icp->size_bands ?? [];
-        if (is_array($sizeBands) && in_array($account->size_band, $sizeBands, true)) {
-            $score += 15;
-        } elseif ($account->size_band !== null) {
-            $score += 5; // Some credit for having size info
         }
 
         // Location match (0-5) - UK gets bonus
@@ -165,12 +157,8 @@ class ScoringService
 
         if ($icp !== null) {
             $sectors = $icp->sectors ?? [];
-            $factors['sector_match'] = is_array($sectors) && in_array($account->sector, $sectors, true);
+            $factors['sector_match'] = is_array($sectors) && $this->accountSectorMatchesIcpSectors($account->sector, $sectors);
             $factors['sector'] = $account->sector;
-
-            $sizeBands = $icp->size_bands ?? [];
-            $factors['size_match'] = is_array($sizeBands) && in_array($account->size_band, $sizeBands, true);
-            $factors['size_band'] = $account->size_band;
         }
 
         $factors['location'] = $account->location;
@@ -210,6 +198,62 @@ class ScoringService
             'research_complete' => $latestRun?->status->value === 'completed',
             'has_brief' => $latestRun?->brief !== null,
         ];
+    }
+
+    /**
+     * Check whether the account sector matches any ICP sector (exact, segment, or token/prefix).
+     */
+    private function accountSectorMatchesIcpSectors(?string $accountSector, array $icpSectors): bool
+    {
+        $accountSector = $accountSector !== null ? trim($accountSector) : '';
+        if ($accountSector === '' || $icpSectors === []) {
+            return false;
+        }
+
+        // Exact match
+        if (in_array($accountSector, $icpSectors, true)) {
+            return true;
+        }
+
+        // Segment match: split on slashes, trim, check if any segment equals an ICP sector
+        $segments = array_map('trim', preg_split('/\s*\/\s*/', $accountSector, -1, PREG_SPLIT_NO_EMPTY));
+        foreach ($segments as $segment) {
+            if ($segment !== '' && in_array($segment, $icpSectors, true)) {
+                return true;
+            }
+        }
+
+        // Intelligent match: tokens (slash + space split) and ICP sectors, lowercase; match if equal or one prefix of other
+        $accountTokens = [];
+        foreach ($segments as $segment) {
+            $words = array_map('trim', explode(' ', $segment));
+            foreach ($words as $word) {
+                if ($word !== '') {
+                    $accountTokens[] = mb_strtolower($word, 'UTF-8');
+                }
+            }
+        }
+        foreach ($icpSectors as $icpSector) {
+            if (! is_string($icpSector) || trim($icpSector) === '') {
+                continue;
+            }
+            $icpLower = mb_strtolower(trim($icpSector), 'UTF-8');
+            foreach ($accountTokens as $token) {
+                if ($token === $icpLower) {
+                    return true;
+                }
+                $longer = strlen($token) >= strlen($icpLower) ? $token : $icpLower;
+                $shorter = strlen($token) < strlen($icpLower) ? $token : $icpLower;
+                if (str_starts_with($longer, $shorter)) {
+                    return true;
+                }
+                if (mb_strlen($shorter, 'UTF-8') >= 4 && str_starts_with($longer, mb_substr($shorter, 0, -1, 'UTF-8'))) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     /**
