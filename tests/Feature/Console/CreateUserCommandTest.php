@@ -24,7 +24,6 @@ class CreateUserCommandTest extends TestCase
             ->expectsConfirmation('Mark email as verified now?', 'yes')
             ->expectsQuestion('Company name', 'Acme Limited')
             ->expectsQuestion('Company slug (leave blank to auto-generate)', '')
-            ->expectsChoice('Company plan', 'free', ['free', 'starter', 'pro', 'enterprise'])
             ->expectsQuestion('Account name', 'Acme Target Account')
             ->expectsQuestion('Account website URL', 'https://acme.example.com')
             ->expectsQuestion('Account domain (leave blank to derive from URL)', '')
@@ -49,5 +48,39 @@ class CreateUserCommandTest extends TestCase
         $this->assertSame($organization->id, $account->organization_id);
         $this->assertSame($user->id, $account->user_id);
         $this->assertSame('acme.example.com', $account->domain);
+    }
+
+    public function test_it_supports_non_interactive_creation_via_flags(): void
+    {
+        $this->artisan('users:create', [
+            '--name' => 'Cloud User',
+            '--email' => 'cloud.user@example.com',
+            '--password' => 'super-secret',
+            '--password-confirmation' => 'super-secret',
+            '--email-verified' => true,
+            '--company-name' => 'Cloud Co',
+            '--company-slug' => 'cloud-co',
+            '--company-plan' => 'starter',
+            '--account-name' => 'Cloud Primary Account',
+            '--account-url' => 'https://www.cloud-co.example.com',
+            '--account-domain' => 'cloud-co.example.com',
+            '--account-sector' => 'SaaS',
+            '--account-size-band' => '51-200',
+            '--account-location' => 'London',
+            '--account-notes' => 'Created from cloud command UI',
+            '--no-interaction' => true,
+        ])->assertSuccessful();
+
+        $user = User::query()->where('email', 'cloud.user@example.com')->firstOrFail();
+        $organization = Organization::query()->where('slug', 'cloud-co')->firstOrFail();
+        $account = Account::query()->where('domain', 'cloud-co.example.com')->firstOrFail();
+
+        $this->assertSame($user->id, $organization->owner_id);
+        $this->assertSame($organization->id, $user->current_organization_id);
+        $this->assertSame('starter', $organization->plan);
+        $this->assertSame($organization->id, $account->organization_id);
+        $this->assertSame($user->id, $account->user_id);
+        $this->assertSame('SaaS', $account->sector);
+        $this->assertSame('51-200', $account->size_band);
     }
 }

@@ -7,6 +7,7 @@ namespace App\Console\Commands;
 use App\Models\Account;
 use App\Models\Organization;
 use App\Models\User;
+use InvalidArgumentException;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -18,7 +19,24 @@ use Illuminate\Validation\ValidationException;
 
 class CreateUserCommand extends Command
 {
-    protected $signature = 'users:create';
+    protected $signature = 'users:create
+        {--name= : User full name}
+        {--email= : User email address}
+        {--password= : User password (min 8 chars)}
+        {--password-confirmation= : User password confirmation}
+        {--email-verified : Mark the email as verified}
+        {--company-id= : Existing organization ID to attach user to}
+        {--company-name= : New organization/company name}
+        {--company-slug= : New organization slug (auto-generated if omitted)}
+        {--company-plan=free : New organization plan (free|starter|pro|enterprise)}
+        {--company-role= : Role in existing company (admin|member)}
+        {--account-name= : Account name}
+        {--account-url= : Account website URL}
+        {--account-domain= : Account domain (derived from URL if omitted)}
+        {--account-sector= : Account sector}
+        {--account-size-band= : Account size band}
+        {--account-location= : Account location}
+        {--account-notes= : Account notes}';
 
     protected $description = 'Create a user with organization and account context';
 
@@ -98,6 +116,11 @@ class CreateUserCommand extends Command
             }
 
             return self::FAILURE;
+        } catch (InvalidArgumentException $exception) {
+            $this->newLine();
+            $this->error($exception->getMessage());
+
+            return self::FAILURE;
         }
 
         return self::SUCCESS;
@@ -128,10 +151,16 @@ class CreateUserCommand extends Command
      */
     private function collectUserData(): array
     {
-        $name = trim((string) $this->ask('User name'));
-        $email = strtolower(trim((string) $this->ask('User email')));
-        $password = (string) $this->secret('User password (min 8 chars)');
-        $passwordConfirmation = (string) $this->secret('Confirm password');
+        $name = $this->requiredInput('name', 'User name');
+        $email = strtolower($this->requiredInput('email', 'User email'));
+        $password = $this->requiredInput('password', 'User password (min 8 chars)', secret: true);
+        $passwordConfirmation = $this->optionalInput('password-confirmation');
+
+        if ($passwordConfirmation === null && $this->input->isInteractive()) {
+            $passwordConfirmation = (string) $this->secret('Confirm password');
+        }
+
+        $passwordConfirmation = $passwordConfirmation ?? $password;
 
         $validator = Validator::make([
             'name' => $name,
@@ -148,7 +177,9 @@ class CreateUserCommand extends Command
             throw new ValidationException($validator);
         }
 
-        $emailVerifiedAt = $this->confirm('Mark email as verified now?', true) ? now() : null;
+        $emailVerifiedAt = $this->option('email-verified')
+            ? now()
+            : ($this->input->isInteractive() && $this->confirm('Mark email as verified now?', true) ? now() : null);
 
         return [$name, $email, $password, $emailVerifiedAt];
     }
@@ -161,7 +192,38 @@ class CreateUserCommand extends Command
         $this->newLine();
         $this->info('Company / organization details');
 
-        $useExistingOrganization = Organization::query()->exists() && $this->confirm(
+        $companyId = $this->optionalInput('company-id');
+        $companyRole = $this->optionalInput('company-role');
+
+        if ($companyId !== null) {
+            if (! ctype_digit($companyId)) {
+                throw new InvalidArgumentException('The --company-id option must be a numeric organization ID.');
+            }
+
+            $organization = Organization::query()->find((int) $companyId);
+
+            if (! $organization) {
+                throw new InvalidArgumentException("Organization not found for --company-id={$companyId}.");
+            }
+
+            $role = $companyRole ?? 'member';
+
+            Validator::make(
+                ['role' => $role],
+                ['role' => ['required', 'string', Rule::in(['admin', 'member'])]]
+            )->validate();
+
+            return [$organization, $role];
+        }
+
+        if (! $this->input->isInteractive() && $this->optionalInput('company-name') === null) {
+            throw new InvalidArgumentException(
+                'Non-interactive mode requires either --company-id for an existing company '
+                .'or --company-name to create one.'
+            );
+        }
+
+        $useExistingOrganization = Organization::query()->exists() && $this->input->isInteractive() && $this->confirm(
             'Attach to an existing company?',
             false
         );
@@ -178,9 +240,13 @@ class CreateUserCommand extends Command
             return [$organization, $role];
         }
 
-        $name = trim((string) $this->ask('Company name'));
-        $slugInput = trim((string) $this->ask('Company slug (leave blank to auto-generate)', ''));
-        $plan = (string) $this->choice('Company plan', ['free', 'starter', 'pro', 'enterprise'], 0);
+        $name = $this->requiredInput('company-name', 'Company name');
+        $slugInput = $this->optionalInput('company-slug') ?? ($this->input->isInteractive()
+            ? trim((string) $this->ask('Company slug (leave blank to auto-generate)', ''))
+            : null);
+        $plan = $this->optionalInput('company-plan') ?? ($this->input->isInteractive()
+            ? (string) $this->choice('Company plan', ['free', 'starter', 'pro', 'enterprise'], 0)
+            : 'free');
 
         $slug = $this->buildUniqueOrganizationSlug($slugInput !== '' ? $slugInput : $name);
 
@@ -215,14 +281,16 @@ class CreateUserCommand extends Command
         $this->newLine();
         $this->info('Account details');
 
-        $name = trim((string) $this->ask('Account name'));
-        $url = trim((string) $this->ask('Account website URL'));
-        $domainInput = trim((string) $this->ask('Account domain (leave blank to derive from URL)', ''));
+        $name = $this->requiredInput('account-name', 'Account name');
+        $url = $this->requiredInput('account-url', 'Account website URL');
+        $domainInput = $this->optionalInput('account-domain') ?? ($this->input->isInteractive()
+            ? trim((string) $this->ask('Account domain (leave blank to derive from URL)', ''))
+            : '');
         $domain = $domainInput !== '' ? strtolower($domainInput) : Account::normalizeDomain($url);
-        $sector = $this->nullableInput('Account sector (optional)');
-        $sizeBand = $this->nullableInput('Account size band (optional)');
-        $location = $this->nullableInput('Account location (optional)');
-        $notes = $this->nullableInput('Account notes (optional)');
+        $sector = $this->optionalInput('account-sector') ?? $this->nullableInput('Account sector (optional)');
+        $sizeBand = $this->optionalInput('account-size-band') ?? $this->nullableInput('Account size band (optional)');
+        $location = $this->optionalInput('account-location') ?? $this->nullableInput('Account location (optional)');
+        $notes = $this->optionalInput('account-notes') ?? $this->nullableInput('Account notes (optional)');
 
         $validator = Validator::make([
             'name' => $name,
@@ -261,7 +329,41 @@ class CreateUserCommand extends Command
 
     private function nullableInput(string $question): ?string
     {
+        if (! $this->input->isInteractive()) {
+            return null;
+        }
+
         $value = trim((string) $this->ask($question, ''));
+
+        return $value === '' ? null : $value;
+    }
+
+    private function requiredInput(string $option, string $question, bool $secret = false): string
+    {
+        $value = $this->optionalInput($option);
+
+        if ($value !== null) {
+            return $value;
+        }
+
+        if (! $this->input->isInteractive()) {
+            throw new InvalidArgumentException("Missing required option --{$option} in non-interactive mode.");
+        }
+
+        $prompted = $secret ? (string) $this->secret($question) : (string) $this->ask($question);
+
+        return trim($prompted);
+    }
+
+    private function optionalInput(string $option): ?string
+    {
+        $value = $this->option($option);
+
+        if (! is_string($value)) {
+            return null;
+        }
+
+        $value = trim($value);
 
         return $value === '' ? null : $value;
     }
