@@ -24,6 +24,19 @@
         <div class="min-h-screen bg-gray-50">
             <livewire:layout.navigation />
 
+            @if (config('app.beta_banner_enabled'))
+                <div class="border-b border-amber-200 bg-amber-50">
+                    <div class="mx-auto flex max-w-7xl items-start gap-3 px-4 py-3 text-sm text-amber-900 sm:px-6 lg:px-8" role="status" aria-live="polite">
+                        <span class="inline-flex rounded-full bg-amber-200 px-2 py-0.5 text-xs font-semibold tracking-wide text-amber-900">
+                            Beta
+                        </span>
+                        <p>
+                            You are using an early version of {{ config('app.name') }}. Features and data may change while we continue improving the platform.
+                        </p>
+                    </div>
+                </div>
+            @endif
+
             <!-- Page Heading -->
             @if (isset($header))
                 <header class="bg-white shadow">

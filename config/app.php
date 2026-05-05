@@ -123,4 +123,11 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | UI Feature Flags
+    |--------------------------------------------------------------------------
+    */
+    'beta_banner_enabled' => (bool) env('BETA_BANNER_ENABLED', true),
+
 ];
